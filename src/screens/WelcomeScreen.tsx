@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {SafeAreaView, Text, StyleSheet} from 'react-native';
 import {setTokens} from '../redux/actions/auth';
 import {Fonts} from '../themes';
+import Logo from '../assets/images/welcome-screen-first-logo.svg';
 
 const WelcomeScreen: React.FC = () => {
 	const dispatch = useDispatch();
@@ -24,6 +25,7 @@ const WelcomeScreen: React.FC = () => {
 				Click Me
 			</Text>
 			{accessToken && <Text>Ada Token</Text>}
+			<Logo width={120} height={40} />
 		</SafeAreaView>
 	);
 };
