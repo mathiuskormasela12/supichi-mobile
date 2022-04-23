@@ -4,6 +4,7 @@ import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {SafeAreaView, Text, StyleSheet} from 'react-native';
 import {setTokens} from '../redux/actions/auth';
+import {Fonts} from '../themes';
 
 const WelcomeScreen: React.FC = () => {
 	const dispatch = useDispatch();
@@ -32,5 +33,7 @@ export default WelcomeScreen;
 const styled = StyleSheet.create({
 	text: {
 		color: 'red',
+		fontSize: 20,
+		fontFamily: Fonts.regular,
 	},
 });
