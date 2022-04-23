@@ -34,6 +34,6 @@ const styled = StyleSheet.create({
 	text: {
 		color: 'red',
 		fontSize: 20,
-		fontFamily: Fonts.regular,
+		fontFamily: Fonts.bold,
 	},
 });
