@@ -1,8 +1,10 @@
 // ========== ITextFieldProps
+import {TextFieldTypes} from '../types';
 
 export interface ITextFieldProps {
 	placeholder: string;
+	type: TextFieldTypes;
 	value: string;
 	label: string;
-	onPress?(): void;
+	onChangeText?(value: string): void;
 }
