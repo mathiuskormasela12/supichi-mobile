@@ -1,13 +1,12 @@
 // ========== Container
 // import all modules
 import React from 'react';
-import {View, Dimensions, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import {percentageDimensions} from '../helpers';
 import {IContainerProps} from '../interfaces';
 
-const width = Dimensions.get('window').width;
-
 export const Container = ({children, size}: IContainerProps) => (
-	<View style={{width: (size / 100) * width, ...styled.container}}>
+	<View style={{width: percentageDimensions(size), ...styled.container}}>
 		{children}
 	</View>
 );

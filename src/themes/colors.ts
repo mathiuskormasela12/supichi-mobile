@@ -7,4 +7,5 @@ export const Colors = {
 	darkGray: '#9A9A9A',
 	lightGray: '#EDEDED',
 	youngLigthGray: '#979797',
+	youngerGray: '#9B9B9B',
 };
