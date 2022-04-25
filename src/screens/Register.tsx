@@ -16,6 +16,7 @@ const Register: React.FC = () => {
 		fullName: '',
 		username: '',
 		password: '',
+		message: '',
 	});
 
 	const handleTextField = (name: string, value: string) => {
@@ -30,8 +31,8 @@ const Register: React.FC = () => {
 	};
 
 	return (
-		<ScrollView>
-			<SafeAreaView style={styled.hero}>
+		<SafeAreaView style={styled.hero}>
+			<ScrollView>
 				<Container size={85}>
 					<View style={styled.header}>
 						<ArrowBack
@@ -82,11 +83,16 @@ const Register: React.FC = () => {
 							<View style={styled.btnControl}>
 								<Button variant="primary">Sign Up</Button>
 							</View>
+							{state.message.length > 0 && (
+								<View style={styled.control}>
+									<Text style={styled.message}>{state.message}</Text>
+								</View>
+							)}
 						</View>
 					</View>
 				</Container>
-			</SafeAreaView>
-		</ScrollView>
+			</ScrollView>
+		</SafeAreaView>
 	);
 };
 
@@ -96,6 +102,13 @@ const styled = StyleSheet.create({
 	hero: {
 		minHeight: percentageDimensions(100, 'height'),
 		backgroundColor: Colors.white,
+	},
+	message: {
+		fontFamily: Fonts.base,
+		fontSize: 16,
+		color: Colors.danger,
+		textAlign: 'center',
+		marginTop: 35,
 	},
 	header: {
 		height: percentageDimensions(10, 'height'),
