@@ -1,6 +1,6 @@
 // ========== TextField
 // import all modules
-import React, {Fragment} from 'react';
+import React, {Fragment, useState, useEffect} from 'react';
 import {View, Text, TextInput, StyleSheet} from 'react-native';
 import {percentageDimensions} from '../helpers';
 import {ITextFieldProps} from '../interfaces';
@@ -9,6 +9,44 @@ import {Colors, Fonts} from '../themes';
 export const TextField = (props: ITextFieldProps) => {
 	const {label, type} = props;
 	const keyboardType = type === 'password' ? 'default' : type;
+	const [message, setMessage] = useState('');
+
+	useEffect(() => {
+		switch (type) {
+			case 'email-address':
+				const valid =
+					/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+						props.value,
+					);
+
+				if (!valid && props.value !== '') {
+					setMessage('Username must be an email');
+				} else {
+					setMessage('');
+				}
+				break;
+			case 'password':
+				if (
+					(props.value.match(/[a-z]/g) === null ||
+						props.value.match(/[A-Z]/g) === null ||
+						props.value.match(/[0-9]/g) === null ||
+						props.value.match(/\W/g) === null) &&
+					props.value.length > 0
+				) {
+					setMessage('Password is too weak');
+				} else {
+					setMessage('');
+				}
+				break;
+			default:
+				setMessage('');
+		}
+	}, [props.value, type]);
+
+	const style =
+		message.length > 1
+			? {...styled.input, ...styled.invalid}
+			: {...styled.input};
 
 	return (
 		<Fragment>
@@ -17,9 +55,10 @@ export const TextField = (props: ITextFieldProps) => {
 				<TextInput
 					secureTextEntry={type === 'password'}
 					keyboardType={keyboardType}
-					style={styled.input}
+					style={style}
 					{...props}
 				/>
+				<Text style={styled.message}>{message}</Text>
 			</View>
 		</Fragment>
 	);
@@ -28,6 +67,18 @@ export const TextField = (props: ITextFieldProps) => {
 const styled = StyleSheet.create({
 	field: {
 		marginTop: 8,
+		position: 'relative',
+	},
+	invalid: {
+		borderBottomColor: Colors.danger,
+	},
+	message: {
+		fontFamily: Fonts.regular,
+		fontSize: 13,
+		color: Colors.danger,
+		position: 'absolute',
+		bottom: -25,
+		right: 0,
 	},
 	label: {
 		color: Colors.dark,

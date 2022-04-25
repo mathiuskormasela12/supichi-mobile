@@ -8,4 +8,5 @@ export const Colors = {
 	lightGray: '#EDEDED',
 	youngLigthGray: '#979797',
 	youngerGray: '#9B9B9B',
+	danger: '#F96060',
 };
