@@ -1,4 +1,4 @@
-// =========== Login
+// =========== ResetPassword
 // import all modules
 import React, {useState} from 'react';
 import {
@@ -17,12 +17,12 @@ import {Colors, Fonts} from '../themes';
 // import all components
 import {Container, TextField, Button} from '../components';
 
-const Login: React.FC = () => {
+const ResetPassword: React.FC = () => {
 	const navigation = useNavigation();
 	const [state, setState] = useState({
-		fullName: '',
-		username: '',
+		resetCode: '',
 		password: '',
+		confirmPassword: '',
 		message: '',
 	});
 
@@ -35,10 +35,6 @@ const Login: React.FC = () => {
 
 	const handleGoBack = () => {
 		navigation.goBack();
-	};
-
-	const handleNavigate = () => {
-		navigation.navigate('ForgotPassword' as never);
 	};
 
 	return (
@@ -54,17 +50,21 @@ const Login: React.FC = () => {
 						</TouchableWithoutFeedback>
 					</View>
 					<View style={styled.form}>
-						<Text style={styled.title}>Welcome Back</Text>
-						<Text style={styled.subtitle}>Sign In to continue</Text>
+						<Text style={styled.title}>Reset Password</Text>
+						<Text style={styled.subtitle}>
+							Reset code was sent to your email. Please enter the code and creae
+							new password
+						</Text>
 						<View style={styled.formMain}>
 							<View style={styled.control}>
 								<TextField
-									type="email-address"
-									value={state.username}
-									label="Username"
-									placeholder="Enter your username"
+									type="number-pad"
+									maxLength={6}
+									value={state.resetCode}
+									label="Reset Code"
+									placeholder="Enter your reset code"
 									onChangeText={(value: string) =>
-										handleTextField('username', value)
+										handleTextField('resetCode', value)
 									}
 								/>
 							</View>
@@ -78,12 +78,20 @@ const Login: React.FC = () => {
 										handleTextField('password', value)
 									}
 								/>
-								<Text style={styled.link} onPress={handleNavigate}>
-									Forgot Password
-								</Text>
+							</View>
+							<View style={styled.control}>
+								<TextField
+									type="password"
+									value={state.confirmPassword}
+									label="Confirm Password"
+									placeholder="Enter your confirm password"
+									onChangeText={(value: string) =>
+										handleTextField('confirmPassword', value)
+									}
+								/>
 							</View>
 							<View style={styled.btnControl}>
-								<Button variant="primary">Sign In</Button>
+								<Button variant="primary">Change Password</Button>
 							</View>
 							{state.message.length > 0 && (
 								<View style={styled.control}>
@@ -98,7 +106,7 @@ const Login: React.FC = () => {
 	);
 };
 
-export default Login;
+export default ResetPassword;
 
 const styled = StyleSheet.create({
 	hero: {
@@ -128,15 +136,6 @@ const styled = StyleSheet.create({
 	},
 	control: {
 		marginBottom: 35,
-		position: 'relative',
-	},
-	link: {
-		color: Colors.dark,
-		fontFamily: Fonts.bold,
-		fontSize: 16,
-		textAlign: 'right',
-		position: 'relative',
-		top: 10,
 	},
 	title: {
 		fontFamily: Fonts.bold,

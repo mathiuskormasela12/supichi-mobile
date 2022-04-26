@@ -1,7 +1,14 @@
 // =========== Register
 // import all modules
 import React, {useState} from 'react';
-import {View, ScrollView, SafeAreaView, Text, StyleSheet} from 'react-native';
+import {
+	View,
+	ScrollView,
+	SafeAreaView,
+	Text,
+	TouchableWithoutFeedback,
+	StyleSheet,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import ArrowBack from '../assets/images/arrow-back.svg';
 import {percentageDimensions} from '../helpers';
@@ -39,11 +46,12 @@ const Register: React.FC = () => {
 			<ScrollView>
 				<Container size={85}>
 					<View style={styled.header}>
-						<ArrowBack
-							onPress={handleGoBack}
-							width={percentageDimensions(6)}
-							height={percentageDimensions(6, 'height')}
-						/>
+						<TouchableWithoutFeedback onPress={handleGoBack}>
+							<ArrowBack
+								width={percentageDimensions(6)}
+								height={percentageDimensions(6, 'height')}
+							/>
+						</TouchableWithoutFeedback>
 					</View>
 					<View style={styled.form}>
 						<Text style={styled.title}>Register</Text>

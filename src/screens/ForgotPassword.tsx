@@ -1,4 +1,4 @@
-// =========== Login
+// =========== ForgotPassword
 // import all modules
 import React, {useState} from 'react';
 import {
@@ -17,12 +17,10 @@ import {Colors, Fonts} from '../themes';
 // import all components
 import {Container, TextField, Button} from '../components';
 
-const Login: React.FC = () => {
+const ForgotPassword: React.FC = () => {
 	const navigation = useNavigation();
 	const [state, setState] = useState({
-		fullName: '',
 		username: '',
-		password: '',
 		message: '',
 	});
 
@@ -38,7 +36,7 @@ const Login: React.FC = () => {
 	};
 
 	const handleNavigate = () => {
-		navigation.navigate('ForgotPassword' as never);
+		navigation.navigate('ResetPassword' as never);
 	};
 
 	return (
@@ -54,8 +52,11 @@ const Login: React.FC = () => {
 						</TouchableWithoutFeedback>
 					</View>
 					<View style={styled.form}>
-						<Text style={styled.title}>Welcome Back</Text>
-						<Text style={styled.subtitle}>Sign In to continue</Text>
+						<Text style={styled.title}>Forgot Password</Text>
+						<Text style={styled.subtitle}>
+							Please enter your email below to recevie your password reset
+							instructions
+						</Text>
 						<View style={styled.formMain}>
 							<View style={styled.control}>
 								<TextField
@@ -68,22 +69,10 @@ const Login: React.FC = () => {
 									}
 								/>
 							</View>
-							<View style={styled.control}>
-								<TextField
-									type="password"
-									value={state.password}
-									label="Password"
-									placeholder="Enter your password"
-									onChangeText={(value: string) =>
-										handleTextField('password', value)
-									}
-								/>
-								<Text style={styled.link} onPress={handleNavigate}>
-									Forgot Password
-								</Text>
-							</View>
 							<View style={styled.btnControl}>
-								<Button variant="primary">Sign In</Button>
+								<Button variant="primary" onPress={handleNavigate}>
+									Send Request
+								</Button>
 							</View>
 							{state.message.length > 0 && (
 								<View style={styled.control}>
@@ -98,7 +87,7 @@ const Login: React.FC = () => {
 	);
 };
 
-export default Login;
+export default ForgotPassword;
 
 const styled = StyleSheet.create({
 	hero: {
@@ -128,15 +117,6 @@ const styled = StyleSheet.create({
 	},
 	control: {
 		marginBottom: 35,
-		position: 'relative',
-	},
-	link: {
-		color: Colors.dark,
-		fontFamily: Fonts.bold,
-		fontSize: 16,
-		textAlign: 'right',
-		position: 'relative',
-		top: 10,
 	},
 	title: {
 		fontFamily: Fonts.bold,

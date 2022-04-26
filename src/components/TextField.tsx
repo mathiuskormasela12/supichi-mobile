@@ -33,7 +33,13 @@ export const TextField = (props: ITextFieldProps) => {
 						props.value.match(/\W/g) === null) &&
 					props.value.length > 0
 				) {
-					setMessage('Password is too weak');
+					setMessage(
+						`${
+							label.split(' ').length > 1
+								? `${label.split(' ')[0]} ${label.split(' ')[1].toLowerCase()}`
+								: label
+						} is too weak`,
+					);
 				} else {
 					setMessage('');
 				}
@@ -41,7 +47,7 @@ export const TextField = (props: ITextFieldProps) => {
 			default:
 				setMessage('');
 		}
-	}, [props.value, type]);
+	}, [props.value, type, label]);
 
 	const style =
 		message.length > 1
