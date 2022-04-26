@@ -30,6 +30,10 @@ const Register: React.FC = () => {
 		navigation.goBack();
 	};
 
+	const handleNavigate = () => {
+		navigation.navigate('Login' as never);
+	};
+
 	return (
 		<SafeAreaView style={styled.hero}>
 			<ScrollView>
@@ -42,10 +46,8 @@ const Register: React.FC = () => {
 						/>
 					</View>
 					<View style={styled.form}>
-						<View style={styled.formHeader}>
-							<Text style={styled.title}>Register</Text>
-							<Text style={styled.subtitle}>Sign Up to continue</Text>
-						</View>
+						<Text style={styled.title}>Register</Text>
+						<Text style={styled.subtitle}>Sign Up to continue</Text>
 						<View style={styled.formMain}>
 							<View style={styled.control}>
 								<TextField
@@ -81,7 +83,9 @@ const Register: React.FC = () => {
 								/>
 							</View>
 							<View style={styled.btnControl}>
-								<Button variant="primary">Sign Up</Button>
+								<Button variant="primary" onPress={handleNavigate}>
+									Sign Up
+								</Button>
 							</View>
 							{state.message.length > 0 && (
 								<View style={styled.control}>
@@ -121,7 +125,6 @@ const styled = StyleSheet.create({
 	btnControl: {
 		marginTop: 30,
 	},
-	formHeader: {},
 	formMain: {
 		marginTop: 50,
 	},

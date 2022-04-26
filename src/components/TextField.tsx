@@ -78,7 +78,7 @@ const styled = StyleSheet.create({
 		color: Colors.danger,
 		position: 'absolute',
 		bottom: -25,
-		right: 0,
+		left: 0,
 	},
 	label: {
 		color: Colors.dark,
