@@ -8,3 +8,5 @@ export * from './IReduxAuthActionWithOptionalState';
 export * from './IContainerProps';
 export * from './IButtonProps';
 export * from './ITextFieldProps';
+export * from './IInvalidMessageGlobalState';
+export * from './IReduxInvalidMessageAction';

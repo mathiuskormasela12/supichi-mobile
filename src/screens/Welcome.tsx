@@ -50,7 +50,7 @@ const WelcomeScreen: React.FC = () => {
 			ref.current?.scrollTo({x: percentageDimensions(200)});
 			setActiveSection(activeSection + 1);
 		} else {
-			handleNavigation('Register');
+			handleNavigation('SignUp');
 		}
 	};
 
@@ -97,7 +97,7 @@ const WelcomeScreen: React.FC = () => {
 								Get Started
 							</Button>
 							<TouchableWithoutFeedback
-								onPress={() => handleNavigation('Login')}>
+								onPress={() => handleNavigation('SignIn')}>
 								<Text style={styled.loginBtn}>Log In</Text>
 							</TouchableWithoutFeedback>
 						</Container>

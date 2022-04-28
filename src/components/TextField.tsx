@@ -1,15 +1,32 @@
 // ========== TextField
 // import all modules
-import React, {Fragment, useState, useEffect} from 'react';
+import React, {Fragment, useEffect} from 'react';
 import {View, Text, TextInput, StyleSheet} from 'react-native';
+import {useSelector, useDispatch} from 'react-redux';
 import {percentageDimensions} from '../helpers';
+import {setInvalidMessage} from '../redux/actions/invalidMessage';
 import {ITextFieldProps} from '../interfaces';
 import {Colors, Fonts} from '../themes';
 
 export const TextField = (props: ITextFieldProps) => {
-	const {label, type} = props;
+	const {label, type, name} = props;
 	const keyboardType = type === 'password' ? 'default' : type;
-	const [message, setMessage] = useState('');
+	const dispatch = useDispatch();
+	const fullNameMessage: string = useSelector(
+		(currentState: any) => currentState.invalidMessage.fullName,
+	);
+	const usernameMessage: string = useSelector(
+		(currentState: any) => currentState.invalidMessage.username,
+	);
+	const passwordMessage: string = useSelector(
+		(currentState: any) => currentState.invalidMessage.password,
+	);
+	const confirmPasswordMessage: string = useSelector(
+		(currentState: any) => currentState.invalidMessage.confirmPassword,
+	);
+	const resetCodeMessage: string = useSelector(
+		(currentState: any) => currentState.invalidMessage.resetCode,
+	);
 
 	useEffect(() => {
 		switch (type) {
@@ -20,9 +37,9 @@ export const TextField = (props: ITextFieldProps) => {
 					);
 
 				if (!valid && props.value !== '') {
-					setMessage('Username must be an email');
+					dispatch(setInvalidMessage(name, 'Username must be an email'));
 				} else {
-					setMessage('');
+					dispatch(setInvalidMessage(name, ''));
 				}
 				break;
 			case 'password':
@@ -33,27 +50,44 @@ export const TextField = (props: ITextFieldProps) => {
 						props.value.match(/\W/g) === null) &&
 					props.value.length > 0
 				) {
-					setMessage(
-						`${
-							label.split(' ').length > 1
-								? `${label.split(' ')[0]} ${label.split(' ')[1].toLowerCase()}`
-								: label
-						} is too weak`,
-					);
+					dispatch(setInvalidMessage(name, `${label} is too weak`));
 				} else {
-					setMessage('');
+					dispatch(setInvalidMessage(name, ''));
 				}
 				break;
 			default:
-				setMessage('');
+				dispatch(setInvalidMessage('fullName', ''));
+				dispatch(setInvalidMessage('username', ''));
+				dispatch(setInvalidMessage('password', ''));
+				dispatch(setInvalidMessage('confirmPassword', ''));
+				dispatch(setInvalidMessage('resetCode', ''));
 		}
-	}, [props.value, type, label]);
+	}, [props.value, type, name, label, dispatch]);
 
-	const style =
-		message.length > 1
+	const usernameStyle =
+		usernameMessage.length > 1 || confirmPasswordMessage.length > 1
 			? {...styled.input, ...styled.invalid}
 			: {...styled.input};
 
+	const passwordStyle =
+		passwordMessage.length > 1
+			? {...styled.input, ...styled.invalid}
+			: {...styled.input};
+
+	const resetCodeStyle =
+		resetCodeMessage.length > 1
+			? {...styled.input, ...styled.invalid}
+			: {...styled.input};
+
+	const fullNameStyle =
+		fullNameMessage.length > 1
+			? {...styled.input, ...styled.invalid}
+			: {...styled.input};
+
+	const confirmPasswordStyle =
+		confirmPasswordMessage.length > 1
+			? {...styled.input, ...styled.invalid}
+			: {...styled.input};
 	return (
 		<Fragment>
 			<Text style={styled.label}>{label}</Text>
@@ -61,10 +95,36 @@ export const TextField = (props: ITextFieldProps) => {
 				<TextInput
 					secureTextEntry={type === 'password'}
 					keyboardType={keyboardType}
-					style={style}
+					style={
+						label === 'Full Name'
+							? fullNameStyle
+							: label === 'Username'
+							? usernameStyle
+							: label === 'Reset Code'
+							? resetCodeStyle
+							: label === 'Password'
+							? passwordStyle
+							: label === 'Confirm Password'
+							? confirmPasswordStyle
+							: label === 'New Password'
+							? passwordStyle
+							: null
+					}
 					{...props}
 				/>
-				<Text style={styled.message}>{message}</Text>
+				{label === 'Full Name' ? (
+					<Text style={styled.message}>{fullNameMessage}</Text>
+				) : label === 'Username' ? (
+					<Text style={styled.message}>{usernameMessage}</Text>
+				) : label === 'Reset Code' ? (
+					<Text style={styled.message}>{resetCodeMessage}</Text>
+				) : label === 'Password' ? (
+					<Text style={styled.message}>{passwordMessage}</Text>
+				) : label === 'Confirm Password' ? (
+					<Text style={styled.message}>{confirmPasswordMessage}</Text>
+				) : label === 'New Password' ? (
+					<Text style={styled.message}>{passwordMessage}</Text>
+				) : null}
 			</View>
 		</Fragment>
 	);

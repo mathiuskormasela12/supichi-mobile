@@ -7,5 +7,6 @@ export interface ITextFieldProps {
 	maxLength?: number;
 	value: string;
 	label: string;
+	name: string;
 	onChangeText?(value: string): void;
 }

@@ -7,11 +7,18 @@ import {IButtonProps} from '../interfaces';
 import {Colors, Fonts} from '../themes';
 
 export const Button: React.FC<IButtonProps> = props => {
-	const {onPress, variant, children} = props;
+	const {onPress, variant, children, disabled} = props;
 
 	return (
 		<TouchableOpacity
-			style={variant === 'primary' ? styled.buttonPrimary : styled.buttonLight}
+			disabled={disabled}
+			style={
+				!disabled
+					? variant === 'primary'
+						? styled.buttonPrimary
+						: styled.buttonLight
+					: styled.buttonDisabled
+			}
 			onPress={onPress}>
 			<Text style={variant === 'primary' ? styled.textLight : styled.textDark}>
 				{children}
@@ -20,12 +27,24 @@ export const Button: React.FC<IButtonProps> = props => {
 	);
 };
 
+Button.defaultProps = {
+	disabled: false,
+};
+
 const styled = StyleSheet.create({
 	buttonPrimary: {
 		borderRadius: 5,
 		width: '100%',
 		height: percentageDimensions(6.5, 'height'),
 		backgroundColor: Colors.primary,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	buttonDisabled: {
+		borderRadius: 5,
+		width: '100%',
+		height: percentageDimensions(6.5, 'height'),
+		backgroundColor: Colors.youngLigthGray,
 		alignItems: 'center',
 		justifyContent: 'center',
 	},

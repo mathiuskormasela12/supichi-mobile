@@ -7,8 +7,8 @@ import RNBootSplash from 'react-native-bootsplash';
 
 // import all screens
 import Welcome from './screens/Welcome';
-import Login from './screens/Login';
-import Register from './screens/Register';
+import SignIn from './screens/SignIn';
+import SignUp from './screens/SignUp';
 import ForgotPassword from './screens/ForgotPassword';
 import ResetPassword from './screens/ResetPassword';
 
@@ -24,13 +24,13 @@ const StackScreen: React.FC = () => {
 					options={{headerShown: false}}
 				/>
 				<Stack.Screen
-					name="Login"
-					component={Login}
+					name="SignIn"
+					component={SignIn}
 					options={{headerShown: false}}
 				/>
 				<Stack.Screen
-					name="Register"
-					component={Register}
+					name="SignUp"
+					component={SignUp}
 					options={{headerShown: false}}
 				/>
 				<Stack.Screen

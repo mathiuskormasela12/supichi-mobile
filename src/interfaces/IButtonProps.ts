@@ -6,5 +6,6 @@ import {ButtonVariant} from '../types';
 export interface IButtonProps {
 	children: React.ReactNode;
 	onPress?(): void;
+	disabled?: boolean;
 	variant: ButtonVariant;
 }

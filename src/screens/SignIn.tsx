@@ -1,4 +1,4 @@
-// =========== Reset Password
+// =========== Sign In
 // import all modules
 import React, {Fragment, useState, useEffect} from 'react';
 import {
@@ -20,21 +20,17 @@ import {Colors, Fonts} from '../themes';
 // import all components
 import {Container, TextField, Button} from '../components';
 
-const ResetPassword: React.FC = () => {
+const SignIn: React.FC = () => {
 	const navigation = useNavigation();
 	const [state, setState] = useState({
-		resetCode: '',
+		username: '',
 		password: '',
-		confirmPassword: '',
 		message: '',
-		disabled: false,
+		disabled: true,
 	});
 
-	const resetCodeMessage: string = useSelector(
-		(currentState: any) => currentState.invalidMessage.resetCode,
-	);
-	const confirmPasswordMessage: string = useSelector(
-		(currentState: any) => currentState.invalidMessage.confirmPassword,
+	const usernameMessage: string = useSelector(
+		(currentState: any) => currentState.invalidMessage.username,
 	);
 	const passwordMessage: string = useSelector(
 		(currentState: any) => currentState.invalidMessage.password,
@@ -42,12 +38,10 @@ const ResetPassword: React.FC = () => {
 
 	useEffect(() => {
 		if (
-			state.resetCode.length === 6 &&
+			state.username.length > 0 &&
 			state.password.length > 0 &&
-			state.confirmPassword.length > 0 &&
-			resetCodeMessage.length < 1 &&
-			passwordMessage.length < 1 &&
-			confirmPasswordMessage.length < 1
+			usernameMessage.length < 1 &&
+			passwordMessage.length < 1
 		) {
 			setState(currentState => ({
 				...currentState,
@@ -60,12 +54,10 @@ const ResetPassword: React.FC = () => {
 			}));
 		}
 	}, [
-		state.resetCode,
-		state.confirmPassword,
+		state.username,
 		state.password,
 		state.disabled,
-		confirmPasswordMessage,
-		resetCodeMessage,
+		usernameMessage,
 		passwordMessage,
 	]);
 
@@ -81,7 +73,7 @@ const ResetPassword: React.FC = () => {
 	};
 
 	const handleNavigate = () => {
-		navigation.navigate('ResetPasswordConfirmation' as never);
+		navigation.navigate('ForgotPassword' as never);
 	};
 
 	return (
@@ -101,22 +93,18 @@ const ResetPassword: React.FC = () => {
 								</TouchableWithoutFeedback>
 							</View>
 							<View style={styled.form}>
-								<Text style={styled.title}>Reset Password</Text>
-								<Text style={styled.subtitle}>
-									Reset code was sent to your email. Please enter the code and
-									creae new password
-								</Text>
+								<Text style={styled.title}>Welcome back</Text>
+								<Text style={styled.subtitle}>Sign in to continue</Text>
 								<View style={styled.formMain}>
 									<View style={styled.control}>
 										<TextField
-											type="number-pad"
-											maxLength={6}
-											value={state.resetCode}
-											label="Reset Code"
-											name="resetCode"
-											placeholder="Enter your reset code"
+											type="email-address"
+											value={state.username}
+											label="Username"
+											name="username"
+											placeholder="Enter your username"
 											onChangeText={(value: string) =>
-												handleTextField('resetCode', value)
+												handleTextField('username', value)
 											}
 										/>
 									</View>
@@ -124,23 +112,11 @@ const ResetPassword: React.FC = () => {
 										<TextField
 											type="password"
 											value={state.password}
-											label="New Password"
+											label="Password"
 											name="password"
-											placeholder="Enter your new password"
+											placeholder="Enter your password"
 											onChangeText={(value: string) =>
 												handleTextField('password', value)
-											}
-										/>
-									</View>
-									<View style={styled.control}>
-										<TextField
-											type="password"
-											value={state.confirmPassword}
-											label="Confirm Password"
-											name="confirmPassword"
-											placeholder="Enter your confirm password"
-											onChangeText={(value: string) =>
-												handleTextField('confirmPassword', value)
 											}
 										/>
 									</View>
@@ -149,7 +125,7 @@ const ResetPassword: React.FC = () => {
 											disabled={state.disabled}
 											variant="primary"
 											onPress={handleNavigate}>
-											Change Password
+											Log In
 										</Button>
 									</View>
 									{state.message.length > 0 && (
@@ -167,7 +143,7 @@ const ResetPassword: React.FC = () => {
 	);
 };
 
-export default ResetPassword;
+export default SignIn;
 
 const styled = StyleSheet.create({
 	iosStatusBar: {

@@ -1,4 +1,4 @@
-// =========== Reset Password
+// =========== Sign Up
 // import all modules
 import React, {Fragment, useState, useEffect} from 'react';
 import {
@@ -20,21 +20,20 @@ import {Colors, Fonts} from '../themes';
 // import all components
 import {Container, TextField, Button} from '../components';
 
-const ResetPassword: React.FC = () => {
+const SignUp: React.FC = () => {
 	const navigation = useNavigation();
 	const [state, setState] = useState({
-		resetCode: '',
+		fullName: '',
+		username: '',
 		password: '',
-		confirmPassword: '',
 		message: '',
-		disabled: false,
+		disabled: true,
 	});
-
-	const resetCodeMessage: string = useSelector(
-		(currentState: any) => currentState.invalidMessage.resetCode,
+	const fullNameMessage: string = useSelector(
+		(currentState: any) => currentState.invalidMessage.fullName,
 	);
-	const confirmPasswordMessage: string = useSelector(
-		(currentState: any) => currentState.invalidMessage.confirmPassword,
+	const usernameMessage: string = useSelector(
+		(currentState: any) => currentState.invalidMessage.username,
 	);
 	const passwordMessage: string = useSelector(
 		(currentState: any) => currentState.invalidMessage.password,
@@ -42,12 +41,12 @@ const ResetPassword: React.FC = () => {
 
 	useEffect(() => {
 		if (
-			state.resetCode.length === 6 &&
+			state.fullName.length > 0 &&
+			state.username.length > 0 &&
 			state.password.length > 0 &&
-			state.confirmPassword.length > 0 &&
-			resetCodeMessage.length < 1 &&
-			passwordMessage.length < 1 &&
-			confirmPasswordMessage.length < 1
+			fullNameMessage.length < 1 &&
+			usernameMessage.length < 1 &&
+			passwordMessage.length < 1
 		) {
 			setState(currentState => ({
 				...currentState,
@@ -60,12 +59,12 @@ const ResetPassword: React.FC = () => {
 			}));
 		}
 	}, [
-		state.resetCode,
-		state.confirmPassword,
+		state.fullName,
+		state.username,
 		state.password,
 		state.disabled,
-		confirmPasswordMessage,
-		resetCodeMessage,
+		fullNameMessage,
+		usernameMessage,
 		passwordMessage,
 	]);
 
@@ -81,7 +80,7 @@ const ResetPassword: React.FC = () => {
 	};
 
 	const handleNavigate = () => {
-		navigation.navigate('ResetPasswordConfirmation' as never);
+		navigation.navigate('SignIn' as never);
 	};
 
 	return (
@@ -101,22 +100,30 @@ const ResetPassword: React.FC = () => {
 								</TouchableWithoutFeedback>
 							</View>
 							<View style={styled.form}>
-								<Text style={styled.title}>Reset Password</Text>
-								<Text style={styled.subtitle}>
-									Reset code was sent to your email. Please enter the code and
-									creae new password
-								</Text>
+								<Text style={styled.title}>Sign Up</Text>
+								<Text style={styled.subtitle}>Sign Up to continue</Text>
 								<View style={styled.formMain}>
 									<View style={styled.control}>
 										<TextField
-											type="number-pad"
-											maxLength={6}
-											value={state.resetCode}
-											label="Reset Code"
-											name="resetCode"
-											placeholder="Enter your reset code"
+											type="default"
+											value={state.fullName}
+											label="Full Name"
+											name="fullName"
+											placeholder="Enter your full name"
 											onChangeText={(value: string) =>
-												handleTextField('resetCode', value)
+												handleTextField('fullName', value)
+											}
+										/>
+									</View>
+									<View style={styled.control}>
+										<TextField
+											type="email-address"
+											value={state.username}
+											name="username"
+											label="Username"
+											placeholder="Enter your username"
+											onChangeText={(value: string) =>
+												handleTextField('username', value)
 											}
 										/>
 									</View>
@@ -124,23 +131,11 @@ const ResetPassword: React.FC = () => {
 										<TextField
 											type="password"
 											value={state.password}
-											label="New Password"
 											name="password"
-											placeholder="Enter your new password"
+											label="Password"
+											placeholder="Enter your password"
 											onChangeText={(value: string) =>
 												handleTextField('password', value)
-											}
-										/>
-									</View>
-									<View style={styled.control}>
-										<TextField
-											type="password"
-											value={state.confirmPassword}
-											label="Confirm Password"
-											name="confirmPassword"
-											placeholder="Enter your confirm password"
-											onChangeText={(value: string) =>
-												handleTextField('confirmPassword', value)
 											}
 										/>
 									</View>
@@ -149,7 +144,7 @@ const ResetPassword: React.FC = () => {
 											disabled={state.disabled}
 											variant="primary"
 											onPress={handleNavigate}>
-											Change Password
+											Sign Up
 										</Button>
 									</View>
 									{state.message.length > 0 && (
@@ -167,7 +162,7 @@ const ResetPassword: React.FC = () => {
 	);
 };
 
-export default ResetPassword;
+export default SignUp;
 
 const styled = StyleSheet.create({
 	iosStatusBar: {
