@@ -9,4 +9,5 @@ export const Colors = {
 	youngLigthGray: '#979797',
 	youngerGray: '#9B9B9B',
 	danger: '#F96060',
+	placeholderColor: '#C6C6C6',
 };

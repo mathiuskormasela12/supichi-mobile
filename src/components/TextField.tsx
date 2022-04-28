@@ -95,6 +95,7 @@ export const TextField = (props: ITextFieldProps) => {
 				<TextInput
 					secureTextEntry={type === 'password'}
 					keyboardType={keyboardType}
+					placeholderTextColor={Colors.placeholderColor}
 					style={
 						label === 'Full Name'
 							? fullNameStyle
