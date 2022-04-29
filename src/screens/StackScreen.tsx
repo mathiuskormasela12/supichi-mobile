@@ -6,22 +6,23 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import RNBootSplash from 'react-native-bootsplash';
 
 // import all screens
-import Welcome from './screens/Welcome';
-import SignIn from './screens/SignIn';
-import SignUp from './screens/SignUp';
-import ForgotPassword from './screens/ForgotPassword';
-import ResetPassword from './screens/ResetPassword';
-import ResetPasswordConfirmation from './screens/ResetPasswordConfirmation';
+import Welcome from './Welcome';
+import SignIn from './SignIn';
+import SignUp from './SignUp';
+import ForgotPassword from './ForgotPassword';
+import ResetPassword from './ResetPassword';
+import ResetPasswordConfirmation from './ResetPasswordConfirmation';
 
 const Stack = createNativeStackNavigator();
 
 const StackScreen: React.FC = () => {
 	return (
 		<NavigationContainer onReady={() => RNBootSplash.hide()}>
-			<Stack.Navigator screenOptions={{
-				animation: 'slide_from_right',
-				fullScreenGestureEnabled: true,
-			}}>
+			<Stack.Navigator
+				screenOptions={{
+					animation: 'slide_from_right',
+					fullScreenGestureEnabled: true,
+				}}>
 				<Stack.Screen
 					name="Welcome"
 					component={Welcome}

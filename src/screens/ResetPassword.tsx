@@ -12,7 +12,8 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import {setLoading} from '../redux/actions/loading';
 import ArrowBack from '../assets/images/arrow-back.svg';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
@@ -22,6 +23,7 @@ import {Container, TextField, Button} from '../components';
 
 const ResetPassword: React.FC = () => {
 	const navigation = useNavigation();
+	const dispatch = useDispatch();
 	const [state, setState] = useState({
 		resetCode: '',
 		password: '',
@@ -81,7 +83,11 @@ const ResetPassword: React.FC = () => {
 	};
 
 	const handleNavigate = () => {
-		navigation.navigate('ResetPasswordConfirmation' as never);
+		dispatch(setLoading());
+		setTimeout(() => {
+			dispatch(setLoading());
+			navigation.navigate('ResetPasswordConfirmation' as never);
+		}, 2000);
 	};
 
 	return (

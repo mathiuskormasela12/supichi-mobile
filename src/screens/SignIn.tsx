@@ -119,6 +119,9 @@ const SignIn: React.FC = () => {
 												handleTextField('password', value)
 											}
 										/>
+										<TouchableWithoutFeedback onPress={handleNavigate}>
+											<Text style={styled.link}>Forgot Password</Text>
+										</TouchableWithoutFeedback>
 									</View>
 									<View style={styled.btnControl}>
 										<Button
@@ -189,7 +192,7 @@ const styled = StyleSheet.create({
 		fontSize: 16,
 		textAlign: 'right',
 		position: 'relative',
-		top: 10,
+		top: percentageDimensions(2.5, 'height'),
 	},
 	title: {
 		fontFamily: Fonts.bold,

@@ -155,7 +155,7 @@ const styled = StyleSheet.create({
 	},
 	input: {
 		padding: 0,
-		fontFamily: Fonts.base,
+		fontFamily: Fonts.regular,
 		fontSize: 16,
 		color: Colors.dark,
 		borderBottomWidth: 1,

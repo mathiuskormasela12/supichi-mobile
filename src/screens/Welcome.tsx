@@ -59,51 +59,51 @@ const WelcomeScreen: React.FC = () => {
 			{Platform.OS === 'ios' && <SafeAreaView style={styled.iosStatusBar} />}
 			<SafeAreaView style={styled.hero}>
 				<StatusBar backgroundColor={Colors.white} barStyle="dark-content" />
-				<View style={styled.header}>
-					<ScrollView
-						onScroll={({nativeEvent}) => handleChangeSection(nativeEvent)}
-						scrollEventThrottle={16}
-						ref={ref}
-						horizontal
-						pagingEnabled
-						showsHorizontalScrollIndicator={false}
-						style={styled.scrollView}>
-						{WELCOME_SCREEN_DATA.map(item => (
-							<View style={styled.slider} key={item.id.toString()}>
-								<item.img width={250} height={250} />
-								<View style={styled.article}>
-									<Text style={styled.title}>{item.title}</Text>
-									<Text style={styled.subtitle}>{item.subtitle}</Text>
-								</View>
+				<ScrollView
+					onScroll={({nativeEvent}) => handleChangeSection(nativeEvent)}
+					scrollEventThrottle={16}
+					ref={ref}
+					horizontal
+					pagingEnabled
+					showsHorizontalScrollIndicator={false}>
+					{WELCOME_SCREEN_DATA.map(item => (
+						<View style={styled.slider} key={item.id.toString()}>
+							<item.img width={250} height={250} />
+							<View style={styled.article}>
+								<Text style={styled.title}>{item.title}</Text>
+								<Text style={styled.subtitle}>{item.subtitle}</Text>
 							</View>
-						))}
-					</ScrollView>
-					<View style={styled.circle}>
-						<View
-							style={[styled.circles, activeSection === 0 && styled.active]}
-						/>
-						<View
-							style={[styled.circles, activeSection === 1 && styled.active]}
-						/>
-						<View
-							style={[styled.circles, activeSection === 2 && styled.active]}
-						/>
-					</View>
+						</View>
+					))}
+				</ScrollView>
+				<View style={styled.circle}>
+					<View
+						style={[styled.circles, activeSection === 0 && styled.active]}
+					/>
+					<View
+						style={[styled.circles, activeSection === 1 && styled.active]}
+					/>
+					<View
+						style={[styled.circles, activeSection === 2 && styled.active]}
+					/>
 				</View>
 				<View style={styled.footer}>
 					<ImageBackground source={wave} style={styled.wave}>
 						<Container size={80}>
-							<Button variant="light" onPress={handleNext}>
-								Get Started
-							</Button>
-							<TouchableWithoutFeedback
-								onPress={() => handleNavigation('SignIn')}>
-								<Text style={styled.loginBtn}>Log In</Text>
-							</TouchableWithoutFeedback>
+							<View style={styled.control}>
+								<Button variant="light" onPress={handleNext}>
+									Get Started
+								</Button>
+								<TouchableWithoutFeedback
+									onPress={() => handleNavigation('SignIn')}>
+									<Text style={styled.loginBtn}>Log In</Text>
+								</TouchableWithoutFeedback>
+							</View>
 						</Container>
 					</ImageBackground>
 				</View>
 			</SafeAreaView>
+			{Platform.OS === 'ios' && <SafeAreaView style={styled.iosBottomBar} />}
 		</Fragment>
 	);
 };
@@ -112,36 +112,36 @@ export default WelcomeScreen;
 
 const styled = StyleSheet.create({
 	hero: {
-		width: percentageDimensions(100),
-		height: percentageDimensions(100, 'height'),
+		backgroundColor: Colors.white,
+		flex: 1,
 	},
 	iosStatusBar: {
 		flex: 0,
 		backgroundColor: Colors.white,
 	},
-	header: {
-		width: percentageDimensions(100),
-		height: percentageDimensions(60, 'height'),
-		alignItems: 'center',
-		justifyContent: 'center',
-		backgroundColor: Colors.white,
-	},
-	scrollView: {
-		width: percentageDimensions(100),
-		height: percentageDimensions(100, 'height'),
-		backgroundColor: Colors.white,
+	iosBottomBar: {
+		flex: 0,
+		backgroundColor: Colors.primary,
 	},
 	slider: {
 		width: percentageDimensions(100),
-		height: percentageDimensions(50, 'height'),
+		flex: 2,
 		alignItems: 'center',
 		backgroundColor: Colors.white,
 		justifyContent: 'center',
 	},
 	footer: {
-		width: percentageDimensions(100),
-		height: percentageDimensions(40, 'height'),
+		flex: 4,
 		backgroundColor: Colors.white,
+	},
+	control: {
+		position: 'relative',
+		top: percentageDimensions(3, 'height'),
+	},
+	wave: {
+		width: '100%',
+		height: '100%',
+		justifyContent: 'center',
 	},
 	article: {
 		marginTop: 15,
@@ -159,17 +159,11 @@ const styled = StyleSheet.create({
 		fontSize: 18,
 		marginTop: 10,
 	},
-	wave: {
-		width: '100%',
-		height: '100%',
-		justifyContent: 'center',
-	},
 	circle: {
 		justifyContent: 'center',
 		flexDirection: 'row',
 		backgroundColor: Colors.white,
-		width: percentageDimensions(100),
-		height: percentageDimensions(10, 'height'),
+		flex: 1,
 	},
 	circles: {
 		width: percentageDimensions(2),
@@ -186,6 +180,6 @@ const styled = StyleSheet.create({
 		fontSize: 18,
 		color: Colors.white,
 		textAlign: 'center',
-		marginTop: Platform.OS === 'ios' ? 32 : 30,
+		marginTop: percentageDimensions(3, 'height'),
 	},
 });
