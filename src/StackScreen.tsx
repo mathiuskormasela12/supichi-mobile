@@ -18,7 +18,10 @@ const Stack = createNativeStackNavigator();
 const StackScreen: React.FC = () => {
 	return (
 		<NavigationContainer onReady={() => RNBootSplash.hide()}>
-			<Stack.Navigator>
+			<Stack.Navigator screenOptions={{
+				animation: 'slide_from_right',
+				fullScreenGestureEnabled: true,
+			}}>
 				<Stack.Screen
 					name="Welcome"
 					component={Welcome}
