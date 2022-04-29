@@ -55,6 +55,19 @@ export const TextField = (props: ITextFieldProps) => {
 					dispatch(setInvalidMessage(name, ''));
 				}
 				break;
+			case 'number-pad':
+				if (
+					name === 'resetCode' &&
+					props.value !== '' &&
+					props.value.length !== 6
+				) {
+					dispatch(
+						setInvalidMessage(name, `${label} must consist of 6 digits`),
+					);
+				} else {
+					dispatch(setInvalidMessage(name, ''));
+				}
+				break;
 			default:
 				dispatch(setInvalidMessage('fullName', ''));
 				dispatch(setInvalidMessage('username', ''));

@@ -1,7 +1,7 @@
 // ========== Wrapper
 // import all modules
-import React, {Fragment} from 'react';
-import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import React, {Fragment, useEffect} from 'react';
+import {View, ActivityIndicator, BackHandler, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import StackScreen from './screens/StackScreen';
 import {Colors} from './themes';
@@ -10,6 +10,19 @@ const Wrapper: React.FC = () => {
 	const loading: boolean = useSelector(
 		(currentState: any) => currentState.loading.loading,
 	);
+
+	useEffect(() => {
+		const backAction = (): boolean => {
+			return true;
+		};
+
+		const backHandler = BackHandler.addEventListener(
+			'hardwareBackPress',
+			backAction,
+		);
+
+		return backHandler.remove();
+	}, []);
 
 	return (
 		<Fragment>
