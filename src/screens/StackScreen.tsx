@@ -12,6 +12,7 @@ import SignUp from './SignUp';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
 import ResetPasswordConfirmation from './ResetPasswordConfirmation';
+import Home from './Home';
 
 const Stack = createNativeStackNavigator();
 
@@ -51,6 +52,11 @@ const StackScreen: React.FC = () => {
 				<Stack.Screen
 					name="ResetPasswordConfirmation"
 					component={ResetPasswordConfirmation}
+					options={{headerShown: false}}
+				/>
+				<Stack.Screen
+					name="Home"
+					component={Home}
 					options={{headerShown: false}}
 				/>
 			</Stack.Navigator>
