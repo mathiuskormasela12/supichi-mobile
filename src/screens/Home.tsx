@@ -71,13 +71,17 @@ const Home: React.FC = () => {
 												/>
 											</TouchableOpacity>
 											<TouchableOpacity style={[styled.items]}>
-												<Text style={styled.listText}>Latest Texts</Text>
+												<Text style={styled.listText}>
+													Latest {routes[index].title}s
+												</Text>
 												<CheckList
 													style={[styled.checkListIcon, styled.active]}
 												/>
 											</TouchableOpacity>
 											<TouchableOpacity style={styled.items}>
-												<Text style={styled.listText}>Older Texts</Text>
+												<Text style={styled.listText}>
+													Older {routes[index].title}s
+												</Text>
 												<CheckList
 													style={[styled.checkListIcon, styled.active]}
 												/>
