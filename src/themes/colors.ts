@@ -13,4 +13,5 @@ export const Colors = {
 	inactiveColor: '#B0BAFC',
 	darker: '#292E4E',
 	whiteDark: '#FDFDFD',
+	languageBoxBorder: '#E4E4E4',
 };

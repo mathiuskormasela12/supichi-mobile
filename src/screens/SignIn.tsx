@@ -73,7 +73,7 @@ const SignIn: React.FC = () => {
 	};
 
 	const handleNavigate = () => {
-		navigation.navigate('Home' as never);
+		navigation.navigate('Main' as never);
 	};
 
 	return (
