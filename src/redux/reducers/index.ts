@@ -9,11 +9,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import authReducer from './auth';
 import invalidMessageReducer from './invalidMessage';
 import loadingReducer from './loading';
+import filterReducer from './filter';
 
 const rootPersistConfig = {
 	key: 'root',
 	storage: AsyncStorage,
-	blacklist: ['invalidMessage', 'loading'],
+	blacklist: ['invalidMessage', 'loading', 'filter'],
 };
 
 const authPersistConfig = {
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
 	auth: persistReducer(authPersistConfig, authReducer),
 	invalidMessage: invalidMessageReducer,
 	loading: loadingReducer,
+	filter: filterReducer,
 });
 
 export default persistReducer(rootPersistConfig, rootReducer);

@@ -14,9 +14,13 @@ import {
 	useWindowDimensions,
 	StyleSheet,
 } from 'react-native';
+import {useSelector, useDispatch} from 'react-redux';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
+import {IFilterGlobalStates} from '../interfaces';
+import {OrderByTypes} from '../types';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
+import {setGroupByDay, setOrderBy} from '../redux/actions/filter';
 
 // import all screens
 import Texts from './Texts';
@@ -30,6 +34,10 @@ import filterIcon from '../assets/images/filter-icon.png';
 import CheckList from '../assets/images/check-list.svg';
 
 const Home: React.FC = () => {
+	const dispatch = useDispatch();
+	const filter: IFilterGlobalStates = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.filter,
+	);
 	const layout = useWindowDimensions();
 	const [index, setIndex] = useState(0);
 	const [routes] = useState([
@@ -52,6 +60,11 @@ const Home: React.FC = () => {
 	const showFilterModal = () =>
 		setVisible((currentVisible: boolean) => !currentVisible);
 
+	const handleFilter = (callback: any, value: OrderByTypes | number) => {
+		dispatch(callback(value));
+		showFilterModal();
+	};
+
 	return (
 		<Fragment>
 			{Platform.OS === 'ios' && <SafeAreaView style={styled.iosStatusBar} />}
@@ -64,26 +77,45 @@ const Home: React.FC = () => {
 								<SafeAreaView style={styled.modal}>
 									<View style={styled.filterBox}>
 										<View style={styled.list}>
-											<TouchableOpacity style={styled.items}>
+											<TouchableOpacity
+												style={styled.items}
+												onPress={() => handleFilter(setGroupByDay, 1)}>
 												<Text style={styled.listText}>Group By Day</Text>
 												<CheckList
-													style={[styled.checkListIcon, styled.active]}
+													style={[
+														styled.checkListIcon,
+														filter.groupByDay === 1 && styled.active,
+													]}
 												/>
 											</TouchableOpacity>
-											<TouchableOpacity style={[styled.items]}>
+											<TouchableOpacity
+												style={[styled.items]}
+												onPress={() => handleFilter(setOrderBy, 'ASC')}>
 												<Text style={styled.listText}>
 													Latest {routes[index].title}s
 												</Text>
 												<CheckList
-													style={[styled.checkListIcon, styled.active]}
+													style={[
+														styled.checkListIcon,
+														filter.groupByDay === 0 &&
+															filter.orderBy === 'ASC' &&
+															styled.active,
+													]}
 												/>
 											</TouchableOpacity>
-											<TouchableOpacity style={styled.items}>
+											<TouchableOpacity
+												style={styled.items}
+												onPress={() => handleFilter(setOrderBy, 'DESC')}>
 												<Text style={styled.listText}>
 													Older {routes[index].title}s
 												</Text>
 												<CheckList
-													style={[styled.checkListIcon, styled.active]}
+													style={[
+														styled.checkListIcon,
+														filter.groupByDay === 0 &&
+															filter.orderBy === 'DESC' &&
+															styled.active,
+													]}
 												/>
 											</TouchableOpacity>
 										</View>

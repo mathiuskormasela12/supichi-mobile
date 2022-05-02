@@ -7,3 +7,5 @@ export * from './PercentageDimensions';
 export * from './TextFieldTypes';
 export * from './SetInvalidMessageAction';
 export * from './SetLoadingAction';
+export * from './OrderByTypes';
+export * from './FilterAction';
