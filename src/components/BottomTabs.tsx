@@ -72,7 +72,7 @@ export const BottomTabs: any = (props: any) => {
 						</TouchableOpacity>
 					</View>
 					<View style={styled.tabLists}>
-						<TouchableOpacity>
+						<TouchableOpacity onPress={showFilterModal}>
 							<ImageIcon style={styled.imageIcon} />
 							<Text style={styled.text}>Image</Text>
 						</TouchableOpacity>
