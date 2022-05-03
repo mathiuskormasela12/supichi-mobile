@@ -6,3 +6,4 @@ export * from './Button';
 export * from './TextField';
 export * from './BottomTabs';
 export * from './Card';
+export * from './DetailModal';

@@ -1,6 +1,6 @@
 // =========== Voices
 // import all modules
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
 	SafeAreaView,
 	View,
@@ -16,7 +16,7 @@ import {Colors, Fonts} from '../themes';
 import emptyStateImage from '../assets/images/empty-state.png';
 
 // import all components
-import {Container, Card} from '../components';
+import {Container, Card, DetailModal} from '../components';
 
 // import all actions
 import {setFetchingVoices} from '../redux/actions/data';
@@ -30,6 +30,8 @@ const Voices: React.FC = () => {
 		(currentGlobalStates: any) => currentGlobalStates.data.fetchingVoices,
 	);
 
+	const [visible, setVisible] = useState(false);
+
 	useEffect(() => {
 		dispatch(setFetchingVoices());
 		setTimeout(() => {
@@ -37,9 +39,24 @@ const Voices: React.FC = () => {
 		}, 5000);
 	}, [dispatch]);
 
+	const handleVisible = () => {
+		setVisible((currentVisible: boolean) => !currentVisible);
+	};
+
 	return (
 		<SafeAreaView style={styled.hero}>
 			<Container>
+				<DetailModal
+					visible={visible}
+					type="voice"
+					title="Detail"
+					renderFrom="Image Gallery"
+					buttonText="Play"
+					date="Aug 5, 2022"
+					text="Lorem ipsum dolor sit amet,
+					consectetur adipiscing. "
+					onClose={handleVisible}
+				/>
 				{fetching ? (
 					<View style={styled.flexContainer}>
 						<ActivityIndicator size="large" color={Colors.primary} />
@@ -51,7 +68,12 @@ const Voices: React.FC = () => {
 						sections={voices}
 						keyExtractor={(item, index) => String(item.id + index)}
 						renderItem={({item}) => (
-							<Card text={item.text} time={item.time} type="voice" />
+							<Card
+								text={item.text}
+								time={item.time}
+								type="voice"
+								onPress={handleVisible}
+							/>
 						)}
 						renderSectionHeader={({section: {date}}) => (
 							<Text style={styled.title}>{date}</Text>

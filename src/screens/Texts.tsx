@@ -1,6 +1,6 @@
 // =========== Texts
 // import all modules
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
 	SafeAreaView,
 	View,
@@ -16,7 +16,7 @@ import {Colors, Fonts} from '../themes';
 import emptyStateImage from '../assets/images/empty-state.png';
 
 // import all components
-import {Container, Card} from '../components';
+import {Container, Card, DetailModal} from '../components';
 
 // import all actions
 import {setFetchingTexts} from '../redux/actions/data';
@@ -29,6 +29,7 @@ const Texts: React.FC = () => {
 	const fetching: boolean = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.data.fetchingTexts,
 	);
+	const [visible, setVisible] = useState(false);
 
 	useEffect(() => {
 		dispatch(setFetchingTexts());
@@ -37,9 +38,24 @@ const Texts: React.FC = () => {
 		}, 5000);
 	}, [dispatch]);
 
+	const handleVisible = () => {
+		setVisible((currentVisible: boolean) => !currentVisible);
+	};
+
 	return (
 		<SafeAreaView style={styled.hero}>
 			<Container>
+				<DetailModal
+					visible={visible}
+					type="text"
+					title="Detail"
+					renderFrom="Image Gallery"
+					buttonText="Close"
+					date="Aug 5, 2022"
+					text="Lorem ipsum dolor sit amet,
+					consectetur adipiscing. "
+					onClose={handleVisible}
+				/>
 				{fetching ? (
 					<View style={styled.flexContainer}>
 						<ActivityIndicator size="large" color={Colors.primary} />
@@ -51,7 +67,12 @@ const Texts: React.FC = () => {
 						sections={texts}
 						keyExtractor={(item, index) => String(item.id + index)}
 						renderItem={({item}) => (
-							<Card text={item.text} time={item.time} type="text" />
+							<Card
+								text={item.text}
+								time={item.time}
+								type="text"
+								onPress={handleVisible}
+							/>
 						)}
 						renderSectionHeader={({section: {date}}) => (
 							<Text style={styled.title}>{date}</Text>
