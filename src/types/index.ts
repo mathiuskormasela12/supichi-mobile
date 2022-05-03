@@ -10,3 +10,5 @@ export * from './SetLoadingAction';
 export * from './OrderByTypes';
 export * from './FilterAction';
 export * from './CardTypes';
+export * from './DataAction';
+export * from './DataTypes';

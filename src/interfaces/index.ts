@@ -16,3 +16,7 @@ export * from './IReduxFilterAction';
 export * from './IReduxGroupByDayAction';
 export * from './IOrderByAction';
 export * from './ICardProps';
+export * from './IDataGlobalStates';
+export * from './IReduxDataAction';
+export * from './IReduxDataTextsAction';
+export * from './IReduxDataVoicesAction';
