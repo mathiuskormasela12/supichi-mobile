@@ -1,6 +1,6 @@
 // ========== ICardProps
-
-type CardTypes = 'text' | 'voice';
+// import all modules
+import {CardTypes} from '../types';
 
 export interface ICardProps {
 	text: string;

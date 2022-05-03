@@ -14,4 +14,6 @@ export const Colors = {
 	darker: '#292E4E',
 	whiteDark: '#FDFDFD',
 	languageBoxBorder: '#E4E4E4',
+	borderRightColorActionCard: '#D8D8D8',
+	lightShadow: '#E0E0E0',
 };
