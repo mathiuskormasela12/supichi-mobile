@@ -12,16 +12,21 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import ArrowBack from '../assets/images/arrow-back.svg';
+import {IRegisterBody} from '../interfaces';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
+import Services from '../services';
+import {setTokens} from '../redux/actions/auth';
+import {setLoading} from '../redux/actions/loading';
 
 // import all components
 import {Container, TextField, Button} from '../components';
 
 const SignUp: React.FC = () => {
 	const navigation = useNavigation();
+	const dispatch = useDispatch();
 	const [state, setState] = useState({
 		fullName: '',
 		username: '',
@@ -79,8 +84,33 @@ const SignUp: React.FC = () => {
 		navigation.goBack();
 	};
 
-	const handleNavigate = () => {
-		navigation.navigate('SignIn' as never);
+	const handleNavigate = (screen: string) => {
+		navigation.navigate(screen as never);
+	};
+
+	const handleRegister = async () => {
+		dispatch(setLoading());
+		const data: IRegisterBody = {
+			fullName: state.fullName,
+			username: state.username,
+			password: state.password,
+		};
+		try {
+			const {data: results} = await Services.register(data);
+			dispatch(setTokens(results.accessToken, results.refreshToken));
+			setTimeout(() => {
+				dispatch(setLoading());
+				handleNavigate('SignIn');
+			}, 500);
+		} catch (err: any) {
+			setTimeout(() => {
+				dispatch(setLoading());
+				setState(currentStates => ({
+					...currentStates,
+					message: err.response.data.message,
+				}));
+			}, 500);
+		}
 	};
 
 	return (
@@ -143,7 +173,7 @@ const SignUp: React.FC = () => {
 										<Button
 											disabled={state.disabled}
 											variant="primary"
-											onPress={handleNavigate}>
+											onPress={handleRegister}>
 											Sign Up
 										</Button>
 									</View>
