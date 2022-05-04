@@ -1,10 +1,17 @@
 // ========== Wrapper
 // import all modules
 import React, {Fragment, useEffect} from 'react';
-import {View, ActivityIndicator, BackHandler, StyleSheet} from 'react-native';
+import {
+	View,
+	Text,
+	ActivityIndicator,
+	BackHandler,
+	StyleSheet,
+} from 'react-native';
 import {useSelector} from 'react-redux';
+import {percentageDimensions} from './helpers';
 import StackScreen from './screens/StackScreen';
-import {Colors} from './themes';
+import {Colors, Fonts} from './themes';
 
 const Wrapper: React.FC = () => {
 	const loading: boolean = useSelector(
@@ -30,6 +37,7 @@ const Wrapper: React.FC = () => {
 			{loading && (
 				<View style={styled.wrapperContainer}>
 					<ActivityIndicator size="large" color={Colors.primary} />
+					<Text style={styled.text}>Please wait...</Text>
 				</View>
 			)}
 		</Fragment>
@@ -47,5 +55,12 @@ const styled = StyleSheet.create({
 		left: 0,
 		right: 0,
 		bottom: 0,
+	},
+	text: {
+		color: Colors.white,
+		fontFamily: Fonts.base,
+		fontSize: 18,
+		textAlign: 'center',
+		marginTop: percentageDimensions(2, 'height'),
 	},
 });

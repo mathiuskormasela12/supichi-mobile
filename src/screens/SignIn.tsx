@@ -72,8 +72,8 @@ const SignIn: React.FC = () => {
 		navigation.goBack();
 	};
 
-	const handleNavigate = () => {
-		navigation.navigate('Main' as never);
+	const handleNavigate = (screen: string) => {
+		navigation.navigate(screen as never);
 	};
 
 	return (
@@ -119,7 +119,8 @@ const SignIn: React.FC = () => {
 												handleTextField('password', value)
 											}
 										/>
-										<TouchableWithoutFeedback onPress={handleNavigate}>
+										<TouchableWithoutFeedback
+											onPress={() => handleNavigate('ForgotPassword')}>
 											<Text style={styled.link}>Forgot Password</Text>
 										</TouchableWithoutFeedback>
 									</View>
@@ -127,7 +128,7 @@ const SignIn: React.FC = () => {
 										<Button
 											disabled={state.disabled}
 											variant="primary"
-											onPress={handleNavigate}>
+											onPress={() => handleNavigate('Main')}>
 											Log In
 										</Button>
 									</View>

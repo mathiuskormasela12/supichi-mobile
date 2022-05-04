@@ -73,7 +73,7 @@ export const DetailModal = (props: IDetailModalProps) => {
 									</View>
 									<View style={styled.lastCol}>
 										<Text style={styled.label}>Text</Text>
-										<Text style={styled.value}>{text}</Text>
+										<Text style={styled.textValue}>{text}</Text>
 									</View>
 								</View>
 								<View style={styled.items}>
@@ -186,6 +186,11 @@ const styled = StyleSheet.create({
 		fontFamily: Fonts.bold,
 		fontSize: 16,
 		textTransform: 'capitalize',
+	},
+	textValue: {
+		color: Colors.dark,
+		fontFamily: Fonts.base,
+		fontSize: 16,
 	},
 	iconList: {
 		flexDirection: 'row',
