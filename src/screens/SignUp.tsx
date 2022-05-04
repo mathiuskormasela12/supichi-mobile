@@ -107,7 +107,13 @@ const SignUp: React.FC = () => {
 				dispatch(setLoading());
 				setState(currentStates => ({
 					...currentStates,
-					message: err.response.data.message,
+					message:
+						err &&
+						err.response &&
+						err.response.data &&
+						err.response.data.message
+							? err.response.data.message
+							: 'Server Error',
 				}));
 			}, 500);
 		}

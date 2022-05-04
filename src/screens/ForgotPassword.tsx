@@ -12,16 +12,21 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import ArrowBack from '../assets/images/arrow-back.svg';
+import {ISendResetPasswordOtpBody} from '../interfaces';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
+import Services from '../services';
+import {setTokens} from '../redux/actions/auth';
+import {setLoading} from '../redux/actions/loading';
 
 // import all components
 import {Container, TextField, Button} from '../components';
 
 const ForgotPassword: React.FC = () => {
 	const navigation = useNavigation();
+	const dispatch = useDispatch();
 	const [state, setState] = useState({
 		username: '',
 		message: '',
@@ -59,6 +64,35 @@ const ForgotPassword: React.FC = () => {
 
 	const handleNavigate = () => {
 		navigation.navigate('ResetPassword' as never);
+	};
+
+	const handleSendResetCode = async () => {
+		dispatch(setLoading());
+		const data: ISendResetPasswordOtpBody = {
+			username: state.username,
+		};
+		try {
+			const {data: results} = await Services.sendResetPasswordOtp(data);
+			dispatch(setTokens(results.accessToken, results.refreshToken));
+			setTimeout(() => {
+				dispatch(setLoading());
+				handleNavigate();
+			}, 500);
+		} catch (err: any) {
+			setTimeout(() => {
+				dispatch(setLoading());
+				setState(currentStates => ({
+					...currentStates,
+					message:
+						err &&
+						err.response &&
+						err.response.data &&
+						err.response.data.message
+							? err.response.data.message
+							: 'Server Error',
+				}));
+			}, 500);
+		}
 	};
 
 	return (
@@ -100,7 +134,7 @@ const ForgotPassword: React.FC = () => {
 										<Button
 											disabled={state.disabled}
 											variant="primary"
-											onPress={handleNavigate}>
+											onPress={handleSendResetCode}>
 											Send Request
 										</Button>
 									</View>

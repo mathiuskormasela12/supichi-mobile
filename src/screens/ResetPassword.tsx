@@ -13,10 +13,13 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useSelector, useDispatch} from 'react-redux';
-import {setLoading} from '../redux/actions/loading';
 import ArrowBack from '../assets/images/arrow-back.svg';
+import {IResetPasswordBody} from '../interfaces';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
+import Services from '../services';
+import {setTokens} from '../redux/actions/auth';
+import {setLoading} from '../redux/actions/loading';
 
 // import all components
 import {Container, TextField, Button} from '../components';
@@ -83,11 +86,38 @@ const ResetPassword: React.FC = () => {
 	};
 
 	const handleNavigate = () => {
+		navigation.navigate('ResetPasswordConfirmation' as never);
+	};
+
+	const handleResetPassword = async () => {
 		dispatch(setLoading());
-		setTimeout(() => {
-			dispatch(setLoading());
-			navigation.navigate('ResetPasswordConfirmation' as never);
-		}, 2000);
+		const data: IResetPasswordBody = {
+			resetCode: state.resetCode,
+			newPassword: state.password,
+			confirmPassword: state.confirmPassword,
+		};
+		try {
+			const {data: results} = await Services.resetPassword(data);
+			dispatch(setTokens(results.accessToken, results.refreshToken));
+			setTimeout(() => {
+				dispatch(setLoading());
+				handleNavigate();
+			}, 500);
+		} catch (err: any) {
+			setTimeout(() => {
+				dispatch(setLoading());
+				setState(currentStates => ({
+					...currentStates,
+					message:
+						err &&
+						err.response &&
+						err.response.data &&
+						err.response.data.message
+							? err.response.data.message
+							: 'Server Error',
+				}));
+			}, 500);
+		}
 	};
 
 	return (
@@ -154,7 +184,7 @@ const ResetPassword: React.FC = () => {
 										<Button
 											disabled={state.disabled}
 											variant="primary"
-											onPress={handleNavigate}>
+											onPress={handleResetPassword}>
 											Change Password
 										</Button>
 									</View>
