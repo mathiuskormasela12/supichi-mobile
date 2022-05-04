@@ -12,3 +12,4 @@ export * from './FilterAction';
 export * from './CardTypes';
 export * from './DataAction';
 export * from './DataTypes';
+export * from './TabViewIndexAction';

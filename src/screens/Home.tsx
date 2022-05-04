@@ -21,6 +21,7 @@ import {OrderByTypes} from '../types';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
 import {setGroupByDay, setOrderBy} from '../redux/actions/filter';
+import {setTabViewIndex} from '../redux/actions/tabViewIndex';
 
 // import all screens
 import Texts from './Texts';
@@ -39,7 +40,9 @@ const Home: React.FC = () => {
 		(currentGlobalStates: any) => currentGlobalStates.filter,
 	);
 	const layout = useWindowDimensions();
-	const [index, setIndex] = useState(0);
+	const index: number = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.tabViewIndex.tabViewIndex,
+	);
 	const [routes] = useState([
 		{
 			key: 'texts',
@@ -56,6 +59,9 @@ const Home: React.FC = () => {
 		texts: Texts,
 		voices: Voices,
 	});
+
+	const setIndex = (tabViewIndex: number) =>
+		dispatch(setTabViewIndex(tabViewIndex));
 
 	const showFilterModal = () =>
 		setVisible((currentVisible: boolean) => !currentVisible);

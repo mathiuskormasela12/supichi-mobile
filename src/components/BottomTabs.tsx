@@ -11,8 +11,12 @@ import {
 	Platform,
 	StyleSheet,
 } from 'react-native';
+import {useSelector} from 'react-redux';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
+
+// import all components
+import {DetailModal} from './';
 
 // import all icons
 import HomeIcon from '../assets/images/home-icon.svg';
@@ -29,30 +33,60 @@ export const BottomTabs: any = (props: any) => {
 		state: {index},
 	} = props;
 	const [visible, setVisible] = useState(false);
+	const [detailModalVisible, setDetailModalVisible] = useState(false);
+	const tabViewIndex: number = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.tabViewIndex.tabViewIndex,
+	);
 
 	const showFilterModal = () =>
 		setVisible((currentVisible: boolean) => !currentVisible);
 
 	const navigateTo = (screen: string) => navigation.navigate(screen);
 
+	const handleDetailModalVisible = () => {
+		setDetailModalVisible((currentVisible: boolean) => !currentVisible);
+		if (visible) {
+			setVisible((currentVisible: boolean) => !currentVisible);
+		}
+	};
+
 	return (
 		<Fragment>
 			<SafeAreaView>
+				<DetailModal
+					visible={detailModalVisible}
+					type={tabViewIndex === 0 ? 'text' : 'voice'}
+					title="Save Result"
+					renderFrom="Image Gallery"
+					buttonText="Close"
+					date="Aug 5, 2022"
+					text="Lorem ipsum dolor sit amet,
+					consectetur adipiscing. "
+					onClose={handleDetailModalVisible}
+				/>
 				<Modal animationType="fade" transparent visible={visible}>
 					<TouchableWithoutFeedback onPress={showFilterModal}>
 						<SafeAreaView style={styled.modal}>
 							<View style={styled.languagesBox}>
 								<View style={styled.list}>
-									<TouchableOpacity style={styled.items}>
+									<TouchableOpacity
+										style={styled.items}
+										onPress={handleDetailModalVisible}>
 										<Text style={styled.listText}>English</Text>
 									</TouchableOpacity>
-									<TouchableOpacity style={[styled.items]}>
+									<TouchableOpacity
+										style={[styled.items]}
+										onPress={handleDetailModalVisible}>
 										<Text style={styled.listText}>Indonesia</Text>
 									</TouchableOpacity>
-									<TouchableOpacity style={styled.items}>
+									<TouchableOpacity
+										style={styled.items}
+										onPress={handleDetailModalVisible}>
 										<Text style={styled.listText}>Japanese</Text>
 									</TouchableOpacity>
-									<TouchableOpacity style={[styled.items, styled.borderless]}>
+									<TouchableOpacity
+										style={[styled.items, styled.borderless]}
+										onPress={handleDetailModalVisible}>
 										<Text style={styled.listText}>Korean</Text>
 									</TouchableOpacity>
 								</View>

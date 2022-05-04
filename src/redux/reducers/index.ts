@@ -11,11 +11,12 @@ import invalidMessageReducer from './invalidMessage';
 import loadingReducer from './loading';
 import filterReducer from './filter';
 import dataReducer from './data';
+import tabViewIndexReducer from './tabViewIndex';
 
 const rootPersistConfig = {
 	key: 'root',
 	storage: AsyncStorage,
-	blacklist: ['invalidMessage', 'loading', 'filter', 'data'],
+	blacklist: ['invalidMessage', 'loading', 'filter', 'data', 'tabViewIndex'],
 };
 
 const authPersistConfig = {
@@ -30,6 +31,7 @@ const rootReducer = combineReducers({
 	loading: loadingReducer,
 	filter: filterReducer,
 	data: dataReducer,
+	tabViewIndex: tabViewIndexReducer,
 });
 
 export default persistReducer(rootPersistConfig, rootReducer);
