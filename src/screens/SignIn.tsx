@@ -12,16 +12,21 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import ArrowBack from '../assets/images/arrow-back.svg';
+import {ILoginBody} from '../interfaces';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
+import Services from '../services';
+import {setTokens} from '../redux/actions/auth';
+import {setLoading} from '../redux/actions/loading';
 
 // import all components
 import {Container, TextField, Button} from '../components';
 
 const SignIn: React.FC = () => {
 	const navigation = useNavigation();
+	const dispatch = useDispatch();
 	const [state, setState] = useState({
 		username: '',
 		password: '',
@@ -76,6 +81,30 @@ const SignIn: React.FC = () => {
 		navigation.navigate(screen as never);
 	};
 
+	const handleLogin = async () => {
+		dispatch(setLoading());
+		const data: ILoginBody = {
+			username: state.username,
+			password: state.password,
+		};
+		try {
+			const {data: results} = await Services.login(data);
+			dispatch(setTokens(results.accessToken, results.refreshToken));
+			setTimeout(() => {
+				dispatch(setLoading());
+				handleNavigate('Main');
+			}, 500);
+		} catch (err: any) {
+			setTimeout(() => {
+				dispatch(setLoading());
+				setState(currentStates => ({
+					...currentStates,
+					message: err.response.data.message,
+				}));
+			}, 500);
+		}
+	};
+
 	return (
 		<Fragment>
 			{Platform.OS === 'ios' && <SafeAreaView style={styled.iosStatusBar} />}
@@ -128,7 +157,7 @@ const SignIn: React.FC = () => {
 										<Button
 											disabled={state.disabled}
 											variant="primary"
-											onPress={() => handleNavigate('Main')}>
+											onPress={handleLogin}>
 											Log In
 										</Button>
 									</View>

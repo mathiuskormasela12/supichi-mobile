@@ -23,3 +23,4 @@ export * from './IReduxDataVoicesAction';
 export * from './IDetailModalProps';
 export * from './IReduxTabViewAction';
 export * from './ITabViewGlobalState';
+export * from './IAuthBody';

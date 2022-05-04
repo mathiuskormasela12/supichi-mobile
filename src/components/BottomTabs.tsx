@@ -11,9 +11,10 @@ import {
 	Platform,
 	StyleSheet,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
+import {setTokens} from '../redux/actions/auth';
 
 // import all components
 import {DetailModal} from './';
@@ -32,6 +33,7 @@ export const BottomTabs: any = (props: any) => {
 		navigation,
 		state: {index},
 	} = props;
+	const dispatch = useDispatch();
 	const [visible, setVisible] = useState(false);
 	const [detailModalVisible, setDetailModalVisible] = useState(false);
 	const tabViewIndex: number = useSelector(
@@ -48,6 +50,11 @@ export const BottomTabs: any = (props: any) => {
 		if (visible) {
 			setVisible((currentVisible: boolean) => !currentVisible);
 		}
+	};
+
+	const handleLogout = () => {
+		dispatch(setTokens(null, null));
+		navigateTo('SignIn');
 	};
 
 	return (
@@ -129,7 +136,7 @@ export const BottomTabs: any = (props: any) => {
 						</TouchableOpacity>
 					</View>
 					<View style={styled.tabLists}>
-						<TouchableOpacity>
+						<TouchableOpacity onPress={handleLogout}>
 							<LogoutIcon style={styled.logoutIcon} />
 							<Text style={styled.text}>Logout</Text>
 						</TouchableOpacity>
