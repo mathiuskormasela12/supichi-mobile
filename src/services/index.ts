@@ -48,11 +48,12 @@ class Service {
 		refreshToken: string,
 		setToken: SetTokensAction,
 		data: ITextsVoicesGetTextsVoicesQuery,
+		dispatch?: any,
 	) {
 		const queries: string = `${Object.keys(data)
 			.map((item, index) => `${item}=${Object.values(data)[index]}`)
 			.join('&')}`;
-		return http(accessToken, refreshToken, setToken).get(
+		return http(accessToken, refreshToken, setToken, dispatch).get(
 			`/voices?${queries}`,
 			data,
 		);

@@ -19,7 +19,6 @@ export * from './ICardProps';
 export * from './IDataGlobalStates';
 export * from './IReduxDataAction';
 export * from './IReduxDataTextsAction';
-export * from './IReduxDataVoicesAction';
 export * from './IDetailModalProps';
 export * from './IReduxTabViewAction';
 export * from './ITabViewGlobalState';

@@ -1,9 +1,5 @@
 // ========== Data Action
-import {
-	IReduxDataVoicesAction,
-	IReduxAction,
-	ITextsVoicesGetTextsVoicesQuery,
-} from '../interfaces';
+import {IReduxAction, ITextsVoicesGetTextsVoicesQuery} from '../interfaces';
 import {SetTokensAction} from './SetTokensAction';
 
 export type ReduxSetTextsVoicesAction = (
@@ -12,7 +8,5 @@ export type ReduxSetTextsVoicesAction = (
 	setToken: SetTokensAction,
 	queries: ITextsVoicesGetTextsVoicesQuery,
 ) => any;
-
-export type ReduxSetVoicesAction = (voices: any[]) => IReduxDataVoicesAction;
 
 export type ReduxSetFetchingAction = () => IReduxAction;
