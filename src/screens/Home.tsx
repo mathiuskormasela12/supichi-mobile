@@ -18,7 +18,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import {useNavigation} from '@react-navigation/native';
 import {IFilterGlobalStates, IHomeProps} from '../interfaces';
-import {OrderByTypes} from '../types';
+import {OrderByTypes, GroupByDayTypes} from '../types';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
 import {setGroupByDay, setOrderBy} from '../redux/actions/filter';
@@ -51,6 +51,12 @@ const Home: React.FC<IHomeProps> = () => {
 	const refreshToken: string | null = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.auth.refreshToken,
 	);
+	const groupByDay: GroupByDayTypes = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.filter.groupByDay,
+	);
+	const orderBy: OrderByTypes = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.filter.orderBy,
+	);
 	const [routes] = useState([
 		{
 			key: 'texts',
@@ -74,7 +80,28 @@ const Home: React.FC<IHomeProps> = () => {
 	const showFilterModal = () =>
 		setVisible((currentVisible: boolean) => !currentVisible);
 
-	const handleFilter = (callback: any, value: OrderByTypes | number) => {
+	const handleFilter = (
+		callback: any,
+		value: OrderByTypes | GroupByDayTypes,
+	) => {
+		if (groupByDay !== value && orderBy !== value) {
+			dispatch({
+				type: 'SET_TEXTS',
+				payload: {
+					data: {
+						texts: [],
+					},
+				},
+			});
+			dispatch({
+				type: 'SET_VOICES',
+				payload: {
+					data: {
+						voices: [],
+					},
+				},
+			});
+		}
 		dispatch(callback(value));
 		showFilterModal();
 	};

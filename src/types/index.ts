@@ -14,3 +14,4 @@ export * from './DataAction';
 export * from './DataTypes';
 export * from './TabViewIndexAction';
 export * from './HttpTypes';
+export * from './GroupByDayTypes';

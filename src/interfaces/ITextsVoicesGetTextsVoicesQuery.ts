@@ -1,11 +1,9 @@
 // ========== ITextsVoicesGetTextsVoicesQuery
 // import all modules
-import {OrderByTypes} from '../types';
-
-type GroupByDate = 1 | 0;
+import {OrderByTypes, GroupByDayTypes} from '../types';
 
 export interface ITextsVoicesGetTextsVoicesQuery {
 	page: number;
-	groupByDate: GroupByDate;
+	groupByDate: GroupByDayTypes;
 	orderBy: OrderByTypes;
 }

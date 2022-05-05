@@ -89,9 +89,11 @@ export const setVoicesAction: ReduxSetTextsVoicesAction = (
 					},
 				},
 			});
-			dispatch({
-				type: 'FETCHING_VOICES',
-			});
+			setTimeout(() => {
+				dispatch({
+					type: 'FETCHING_VOICES',
+				});
+			}, 500);
 		} catch (err: any) {
 			console.log(err);
 			dispatch({
@@ -102,9 +104,11 @@ export const setVoicesAction: ReduxSetTextsVoicesAction = (
 					},
 				},
 			});
-			dispatch({
-				type: 'FETCHING_VOICES',
-			});
+			setTimeout(() => {
+				dispatch({
+					type: 'FETCHING_VOICES',
+				});
+			}, 500);
 		}
 	};
 };
@@ -135,9 +139,11 @@ export const setTextsAction: ReduxSetTextsVoicesAction = (
 					},
 				},
 			});
-			dispatch({
-				type: 'FETCHING_TEXTS',
-			});
+			setTimeout(() => {
+				dispatch({
+					type: 'FETCHING_TEXTS',
+				});
+			}, 500);
 		} catch (err: any) {
 			console.log(err);
 			dispatch({
@@ -148,9 +154,11 @@ export const setTextsAction: ReduxSetTextsVoicesAction = (
 					},
 				},
 			});
-			dispatch({
-				type: 'FETCHING_TEXTS',
-			});
+			setTimeout(() => {
+				dispatch({
+					type: 'FETCHING_TEXTS',
+				});
+			}, 500);
 		}
 	};
 };

@@ -1,11 +1,12 @@
 // =========== Voices
 // import all modules
-import React, {useState, useEffect} from 'react';
+import React, {Fragment, useState, useEffect} from 'react';
 import {
 	SafeAreaView,
 	View,
 	Text,
 	SectionList,
+	FlatList,
 	Image,
 	ActivityIndicator,
 	StyleSheet,
@@ -14,8 +15,9 @@ import {useSelector, useDispatch} from 'react-redux';
 import {percentageDimensions} from '../helpers';
 import {IHomeProps, ITextsVoicesGetTextsVoicesQuery} from '../interfaces';
 import {Colors, Fonts} from '../themes';
+import {GroupByDayTypes, OrderByTypes} from '../types';
 import emptyStateImage from '../assets/images/empty-state.png';
-import {setTextsVoicesAction} from '../redux/actions/data';
+import {setVoicesAction} from '../redux/actions/data';
 import {setTokens} from '../redux/actions/auth';
 
 // import all components
@@ -35,6 +37,12 @@ const Voices: React.FC<IHomeProps> = props => {
 	const refreshToken: string | null = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.auth.refreshToken,
 	);
+	const groupByDay: GroupByDayTypes = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.filter.groupByDay,
+	);
+	const orderBy: OrderByTypes = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.filter.orderBy,
+	);
 
 	const [visible, setVisible] = useState(false);
 
@@ -47,15 +55,20 @@ const Voices: React.FC<IHomeProps> = props => {
 	useEffect(() => {
 		const queries: ITextsVoicesGetTextsVoicesQuery = {
 			page: 1,
-			groupByDate: 1,
-			orderBy: 'ASC',
+			groupByDate: groupByDay,
+			orderBy,
 		};
 		if (accessToken && refreshToken && !isFromLoginScreen) {
-			dispatch(
-				setTextsVoicesAction(accessToken, refreshToken, setTokens, queries),
-			);
+			dispatch(setVoicesAction(accessToken, refreshToken, setTokens, queries));
 		}
-	}, [accessToken, refreshToken, dispatch, isFromLoginScreen]);
+	}, [
+		accessToken,
+		refreshToken,
+		dispatch,
+		isFromLoginScreen,
+		groupByDay,
+		orderBy,
+	]);
 
 	return (
 		<SafeAreaView style={styled.hero}>
@@ -76,32 +89,57 @@ const Voices: React.FC<IHomeProps> = props => {
 					<Text style={styled.text}>Please wait...</Text>
 				</View>
 			) : voices.length > 0 ? (
-				<SectionList
-					showsVerticalScrollIndicator={false}
-					sections={voices}
-					keyExtractor={(item, index) => String(item.id + index)}
-					renderItem={({item}) => (
-						<Container>
-							<Card
-								text={item.text}
-								time={item.time}
-								type="voice"
-								onPress={handleVisible}
-							/>
-						</Container>
-					)}
-					renderSectionHeader={({section: {date, data}}) => {
-						if (data.length > 0) {
-							return (
+				<Fragment>
+					{groupByDay === 1 ? (
+						<SectionList
+							showsVerticalScrollIndicator={false}
+							sections={voices}
+							keyExtractor={item => String(item.id)}
+							renderItem={({item}) => (
 								<Container>
-									<Text style={styled.title}>{date}</Text>
+									<Card
+										text={item.text}
+										time={item.time}
+										type="text"
+										onPress={handleVisible}
+									/>
 								</Container>
-							);
-						} else {
-							return null;
-						}
-					}}
-				/>
+							)}
+							renderSectionHeader={({section: {date, data}}) => {
+								if (data.length > 0) {
+									return (
+										<Container>
+											<Text style={styled.title}>{date}</Text>
+										</Container>
+									);
+								} else {
+									return null;
+								}
+							}}
+						/>
+					) : (
+						<Fragment>
+							<Container>
+								<Text style={styled.flatListTitle}>All Voices</Text>
+							</Container>
+							<FlatList
+								showsVerticalScrollIndicator={false}
+								data={voices}
+								keyExtractor={(item, index) => String(index)}
+								renderItem={({item}) => (
+									<Container>
+										<Card
+											text={item.text}
+											time={item.time}
+											type="text"
+											onPress={handleVisible}
+										/>
+									</Container>
+								)}
+							/>
+						</Fragment>
+					)}
+				</Fragment>
 			) : (
 				<View style={styled.flexContainer}>
 					<Image source={emptyStateImage} style={styled.image} />
@@ -128,6 +166,14 @@ const styled = StyleSheet.create({
 		color: Colors.darkGray,
 		fontSize: 15,
 		textTransform: 'uppercase',
+		marginTop: percentageDimensions(3.2, 'height'),
+		marginBottom: percentageDimensions(1, 'height'),
+	},
+	flatListTitle: {
+		fontFamily: Fonts.bold,
+		color: Colors.darkGray,
+		fontSize: 15,
+		textTransform: 'capitalize',
 		marginTop: percentageDimensions(3.2, 'height'),
 		marginBottom: percentageDimensions(1, 'height'),
 	},
