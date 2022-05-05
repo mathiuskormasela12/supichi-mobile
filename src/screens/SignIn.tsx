@@ -20,7 +20,7 @@ import {Colors, Fonts} from '../themes';
 import Services from '../services';
 import {setTokens} from '../redux/actions/auth';
 import {setLoading} from '../redux/actions/loading';
-import {setTexts} from '../redux/actions/data';
+import {setTextsVoicesAction} from '../redux/actions/data';
 
 // import all components
 import {Container, TextField, Button} from '../components';
@@ -78,8 +78,8 @@ const SignIn: React.FC = () => {
 		navigation.goBack();
 	};
 
-	const handleNavigate = (screen: string) => {
-		navigation.navigate(screen as never);
+	const handleNavigate = (screen: string, data: any) => {
+		navigation.navigate(screen as never, data as never);
 	};
 
 	const handleLogin = async () => {
@@ -99,7 +99,7 @@ const SignIn: React.FC = () => {
 				setTokens(results.results.accessToken, results.results.refreshToken),
 			);
 			dispatch(
-				setTexts(
+				setTextsVoicesAction(
 					results.results.accessToken,
 					results.results.refreshToken,
 					setTokens,
@@ -108,7 +108,7 @@ const SignIn: React.FC = () => {
 			);
 			setTimeout(() => {
 				dispatch(setLoading());
-				handleNavigate('Main');
+				handleNavigate('Main', {isFromLoginScreen: true});
 			}, 500);
 		} catch (err: any) {
 			setTimeout(() => {
@@ -171,7 +171,7 @@ const SignIn: React.FC = () => {
 											}
 										/>
 										<TouchableWithoutFeedback
-											onPress={() => handleNavigate('ForgotPassword')}>
+											onPress={() => handleNavigate('ForgotPassword', {})}>
 											<Text style={styled.link}>Forgot Password</Text>
 										</TouchableWithoutFeedback>
 									</View>

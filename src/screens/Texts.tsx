@@ -1,6 +1,6 @@
 // =========== Texts
 // import all modules
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
 	SafeAreaView,
 	View,
@@ -10,26 +10,48 @@ import {
 	ActivityIndicator,
 	StyleSheet,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {percentageDimensions} from '../helpers';
+import {IHomeProps, ITextsVoicesGetTextsVoicesQuery} from '../interfaces';
 import {Colors, Fonts} from '../themes';
 import emptyStateImage from '../assets/images/empty-state.png';
+import {setTextsAction} from '../redux/actions/data';
+import {setTokens} from '../redux/actions/auth';
 
 // import all components
 import {Container, Card, DetailModal} from '../components';
 
-const Texts: React.FC = () => {
+const Texts: React.FC<IHomeProps> = props => {
+	const dispatch = useDispatch();
 	const texts: any[] = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.data.texts,
 	);
 	const fetching: boolean = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.data.fetchingTexts,
 	);
+	const accessToken: string | null = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.auth.accessToken,
+	);
+	const refreshToken: string | null = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.auth.refreshToken,
+	);
 	const [visible, setVisible] = useState(false);
 
 	const handleVisible = () => {
 		setVisible((currentVisible: boolean) => !currentVisible);
 	};
+	const {isFromLoginScreen} = props;
+
+	useEffect(() => {
+		const queries: ITextsVoicesGetTextsVoicesQuery = {
+			page: 1,
+			groupByDate: 1,
+			orderBy: 'ASC',
+		};
+		if (accessToken && refreshToken && !isFromLoginScreen) {
+			dispatch(setTextsAction(accessToken, refreshToken, setTokens, queries));
+		}
+	}, [accessToken, refreshToken, dispatch, isFromLoginScreen]);
 
 	return (
 		<SafeAreaView style={styled.hero}>

@@ -8,6 +8,7 @@ const http: HttpFunc = (
 	accessToken?: string,
 	refreshToken?: string,
 	setTokens?: SetTokensAction,
+	dispatch?: any,
 ) => {
 	const instances = axios.create({
 		baseURL: API_URL,
@@ -19,37 +20,49 @@ const http: HttpFunc = (
 				if (accessToken) {
 					config.headers['x-access-token'] = accessToken;
 				}
-
 				return config;
 			},
-			(err: unknown) => {
-				return Promise.reject(err);
+			error => {
+				return Promise.reject(error);
 			},
 		);
 
 		instances.interceptors.response.use(
-			res => res,
+			(res: unknown) => {
+				return res;
+			},
 			async (err: any) => {
-				const originalConfig = err.config();
-
-				if (originalConfig.url !== '/auth/login' && err.response) {
-					if (err.response.status === 401 && !originalConfig._retry) {
+				console.log('LIAT INI BRE =>', err.request.status);
+				const originalConfig = err.config;
+				if (err.response) {
+					// Access Token was expired
+					if (err.response.status === 403 && !originalConfig._retry) {
 						originalConfig._retry = true;
-
 						try {
-							const rs = await instances.post('/auth/access-token', {
+							const {data} = await instances.post('/auth/access-token', {
 								refreshToken,
 							});
-							const {
-								accessToken: newAccessToken,
-								refreshToken: newRefreshToken,
-							} = rs.data;
-							setTokens(newAccessToken, newRefreshToken);
-						} catch (_err: unknown) {
-							return Promise.reject(_err);
+							dispatch(
+								setTokens(data.results.accessToken, data.results.refreshToken),
+							);
+							return instances(originalConfig);
+						} catch (_error: any) {
+							console.log(_error);
+
+							dispatch(setTokens(null, null));
+
+							if (_error.response && _error.response.data) {
+								return Promise.reject(_error.response.data);
+							}
+							return Promise.reject(_error);
 						}
 					}
+					if (err.response.status === 400 && err.response.data) {
+						return Promise.reject(err.response.data);
+					}
 				}
+
+				return Promise.reject(err);
 			},
 		);
 	}

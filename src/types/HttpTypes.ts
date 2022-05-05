@@ -5,4 +5,5 @@ export type HttpFunc = (
 	accessToken?: string,
 	refreshToken?: string,
 	setTokens?: SetTokensAction,
+	dispatch?: any,
 ) => any;

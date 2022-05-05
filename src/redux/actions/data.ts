@@ -2,7 +2,6 @@
 // import all modules
 import {ITextsVoicesGetTextsVoicesQuery} from '../../interfaces';
 import {
-	ReduxSetTextsAction,
 	ReduxSetVoicesAction,
 	ReduxSetTextsVoicesAction,
 	ReduxSetFetchingAction,
@@ -10,7 +9,7 @@ import {
 } from '../../types';
 import Services from '../../services';
 
-export const setTexts: ReduxSetTextsAction = (
+export const setTextsVoicesAction: ReduxSetTextsVoicesAction = (
 	accessToken: string,
 	refreshToken: string,
 	setToken: SetTokensAction,
@@ -74,18 +73,51 @@ export const setVoices: ReduxSetVoicesAction = (voices: any[]) => ({
 	},
 });
 
-export const setTextsVoices: ReduxSetTextsVoicesAction = (
-	texts: any[],
-	voices: any[],
-) => ({
-	type: 'SET_TEXTS',
-	payload: {
-		data: {
-			texts,
-			voices,
-		},
-	},
-});
+export const setTextsAction: ReduxSetTextsVoicesAction = (
+	accessToken: string,
+	refreshToken: string,
+	setToken: SetTokensAction,
+	queries: ITextsVoicesGetTextsVoicesQuery,
+) => {
+	return async (dispatch: any) => {
+		dispatch({
+			type: 'FETCHING_TEXTS',
+		});
+		try {
+			const {data: texts} = await Services.getAllTexts(
+				accessToken,
+				refreshToken,
+				setToken,
+				queries,
+				dispatch,
+			);
+			dispatch({
+				type: 'SET_TEXTS',
+				payload: {
+					data: {
+						texts: texts.results,
+					},
+				},
+			});
+			dispatch({
+				type: 'FETCHING_TEXTS',
+			});
+		} catch (err: any) {
+			console.log(err);
+			dispatch({
+				type: 'SET_TEXTS',
+				payload: {
+					data: {
+						texts: [],
+					},
+				},
+			});
+			dispatch({
+				type: 'FETCHING_TEXTS',
+			});
+		}
+	};
+};
 
 export const setFetchingTexts: ReduxSetFetchingAction = () => ({
 	type: 'FETCHING_TEXTS',

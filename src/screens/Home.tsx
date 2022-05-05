@@ -1,6 +1,6 @@
 // ========== Home
 // import all modules
-import React, {Fragment, useState} from 'react';
+import React, {Fragment, useState, useEffect} from 'react';
 import {
 	View,
 	SafeAreaView,
@@ -16,7 +16,8 @@ import {
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
-import {IFilterGlobalStates} from '../interfaces';
+import {useNavigation} from '@react-navigation/native';
+import {IFilterGlobalStates, IHomeProps} from '../interfaces';
 import {OrderByTypes} from '../types';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
@@ -34,14 +35,21 @@ import {Container} from '../components';
 import filterIcon from '../assets/images/filter-icon.png';
 import CheckList from '../assets/images/check-list.svg';
 
-const Home: React.FC = () => {
+const Home: React.FC<IHomeProps> = () => {
 	const dispatch = useDispatch();
+	const navigation = useNavigation();
 	const filter: IFilterGlobalStates = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.filter,
 	);
 	const layout = useWindowDimensions();
 	const index: number = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.tabViewIndex.tabViewIndex,
+	);
+	const accessToken: string | null = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.auth.accessToken,
+	);
+	const refreshToken: string | null = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.auth.refreshToken,
 	);
 	const [routes] = useState([
 		{
@@ -70,6 +78,12 @@ const Home: React.FC = () => {
 		dispatch(callback(value));
 		showFilterModal();
 	};
+
+	useEffect(() => {
+		if (!accessToken || !refreshToken) {
+			navigation.navigate('SignIn' as never);
+		}
+	}, [accessToken, refreshToken, navigation]);
 
 	return (
 		<Fragment>
@@ -163,6 +177,10 @@ const Home: React.FC = () => {
 			{Platform.OS === 'ios' && <SafeAreaView style={styled.iosBottomBar} />}
 		</Fragment>
 	);
+};
+
+Home.defaultProps = {
+	isFromLoginScreen: false,
 };
 
 export default Home;

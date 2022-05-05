@@ -1,6 +1,6 @@
 // ========== WelcomeScreen
 // import all modules
-import React, {Fragment, useState, useRef} from 'react';
+import React, {Fragment, useState, useRef, useEffect, useCallback} from 'react';
 import {
 	SafeAreaView,
 	Text,
@@ -14,6 +14,7 @@ import {
 	NativeScrollEvent,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 import {Fonts, Colors} from '../themes';
 import {WELCOME_SCREEN_DATA} from '../constants';
 import {percentageDimensions} from '../helpers';
@@ -26,9 +27,17 @@ const WelcomeScreen: React.FC = () => {
 	const navigation = useNavigation();
 	const [activeSection, setActiveSection] = useState(0);
 	let ref: any = useRef();
+	const accessToken: string | null = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.auth.accessToken,
+	);
+	const refreshToken: string | null = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.auth.refreshToken,
+	);
 
-	const handleNavigation = (screen: string) =>
-		navigation.navigate(screen as never);
+	const handleNavigation = useCallback(
+		(screen: string) => navigation.navigate(screen as never),
+		[navigation],
+	);
 
 	const handleChangeSection = (nativeEvent: NativeScrollEvent) => {
 		if (nativeEvent) {
@@ -53,6 +62,12 @@ const WelcomeScreen: React.FC = () => {
 			handleNavigation('SignUp');
 		}
 	};
+
+	useEffect(() => {
+		if (accessToken && refreshToken) {
+			handleNavigation('Main');
+		}
+	}, [accessToken, refreshToken, handleNavigation]);
 
 	return (
 		<Fragment>
