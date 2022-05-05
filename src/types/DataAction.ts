@@ -1,12 +1,18 @@
 // ========== Data Action
 import {
-	IReduxDataTextsAction,
 	IReduxDataVoicesAction,
 	IReduxDataAction,
 	IReduxAction,
+	ITextsGetTextsQuery,
 } from '../interfaces';
+import {SetTokensAction} from './SetTokensAction';
 
-export type ReduxSetTextsAction = (texts: any[]) => IReduxDataTextsAction;
+export type ReduxSetTextsAction = (
+	acessToken: string,
+	refreshToken: string,
+	setToken: SetTokensAction,
+	queries: ITextsGetTextsQuery,
+) => any;
 
 export type ReduxSetVoicesAction = (voices: any[]) => IReduxDataVoicesAction;
 

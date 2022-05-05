@@ -14,12 +14,13 @@ import {useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useSelector, useDispatch} from 'react-redux';
 import ArrowBack from '../assets/images/arrow-back.svg';
-import {ILoginBody} from '../interfaces';
+import {ILoginBody, ITextsVoicesGetTextsVoicesQuery} from '../interfaces';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
 import Services from '../services';
 import {setTokens} from '../redux/actions/auth';
 import {setLoading} from '../redux/actions/loading';
+import {setTexts} from '../redux/actions/data';
 
 // import all components
 import {Container, TextField, Button} from '../components';
@@ -87,9 +88,24 @@ const SignIn: React.FC = () => {
 			username: state.username,
 			password: state.password,
 		};
+		const queries: ITextsVoicesGetTextsVoicesQuery = {
+			page: 1,
+			groupByDate: 1,
+			orderBy: 'ASC',
+		};
 		try {
 			const {data: results} = await Services.login(data);
-			dispatch(setTokens(results.accessToken, results.refreshToken));
+			dispatch(
+				setTokens(results.results.accessToken, results.results.refreshToken),
+			);
+			dispatch(
+				setTexts(
+					results.results.accessToken,
+					results.results.refreshToken,
+					setTokens,
+					queries,
+				),
+			);
 			setTimeout(() => {
 				dispatch(setLoading());
 				handleNavigate('Main');

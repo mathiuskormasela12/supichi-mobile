@@ -1,6 +1,6 @@
 // =========== Voices
 // import all modules
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
 	SafeAreaView,
 	View,
@@ -10,7 +10,7 @@ import {
 	ActivityIndicator,
 	StyleSheet,
 } from 'react-native';
-import {useSelector, useDispatch} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
 import emptyStateImage from '../assets/images/empty-state.png';
@@ -18,11 +18,7 @@ import emptyStateImage from '../assets/images/empty-state.png';
 // import all components
 import {Container, Card, DetailModal} from '../components';
 
-// import all actions
-import {setFetchingVoices} from '../redux/actions/data';
-
 const Voices: React.FC = () => {
-	const dispatch = useDispatch();
 	const voices: any[] = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.data.voices,
 	);
@@ -32,62 +28,63 @@ const Voices: React.FC = () => {
 
 	const [visible, setVisible] = useState(false);
 
-	useEffect(() => {
-		dispatch(setFetchingVoices());
-		setTimeout(() => {
-			dispatch(setFetchingVoices());
-		}, 5000);
-	}, [dispatch]);
-
 	const handleVisible = () => {
 		setVisible((currentVisible: boolean) => !currentVisible);
 	};
 
 	return (
 		<SafeAreaView style={styled.hero}>
-			<Container>
-				<DetailModal
-					visible={visible}
-					type="voice"
-					title="Detail"
-					renderFrom="Image Gallery"
-					buttonText="Play"
-					date="Aug 5, 2022"
-					text="Lorem ipsum dolor sit amet,
+			<DetailModal
+				visible={visible}
+				type="voice"
+				title="Detail"
+				renderFrom="Image Gallery"
+				buttonText="Play"
+				date="Aug 5, 2022"
+				text="Lorem ipsum dolor sit amet,
 					consectetur adipiscing. "
-					onClose={handleVisible}
-				/>
-				{fetching ? (
-					<View style={styled.flexContainer}>
-						<ActivityIndicator size="large" color={Colors.primary} />
-						<Text style={styled.text}>Please wait...</Text>
-					</View>
-				) : voices.length > 0 ? (
-					<SectionList
-						showsVerticalScrollIndicator={false}
-						sections={voices}
-						keyExtractor={(item, index) => String(item.id + index)}
-						renderItem={({item}) => (
+				onClose={handleVisible}
+			/>
+			{fetching ? (
+				<View style={styled.flexContainer}>
+					<ActivityIndicator size="large" color={Colors.primary} />
+					<Text style={styled.text}>Please wait...</Text>
+				</View>
+			) : voices.length > 0 ? (
+				<SectionList
+					showsVerticalScrollIndicator={false}
+					sections={voices}
+					keyExtractor={(item, index) => String(item.id + index)}
+					renderItem={({item}) => (
+						<Container>
 							<Card
 								text={item.text}
 								time={item.time}
 								type="voice"
 								onPress={handleVisible}
 							/>
-						)}
-						renderSectionHeader={({section: {date}}) => (
-							<Text style={styled.title}>{date}</Text>
-						)}
-					/>
-				) : (
-					<View style={styled.flexContainer}>
-						<Image source={emptyStateImage} style={styled.image} />
-						<Text style={styled.text}>
-							Hmmm looks like you don't have any data
-						</Text>
-					</View>
-				)}
-			</Container>
+						</Container>
+					)}
+					renderSectionHeader={({section: {date, data}}) => {
+						if (data.length > 0) {
+							return (
+								<Container>
+									<Text style={styled.title}>{date}</Text>
+								</Container>
+							);
+						} else {
+							return null;
+						}
+					}}
+				/>
+			) : (
+				<View style={styled.flexContainer}>
+					<Image source={emptyStateImage} style={styled.image} />
+					<Text style={styled.text}>
+						Hmmm looks like you don't have any data
+					</Text>
+				</View>
+			)}
 		</SafeAreaView>
 	);
 };
@@ -106,7 +103,8 @@ const styled = StyleSheet.create({
 		color: Colors.darkGray,
 		fontSize: 15,
 		textTransform: 'uppercase',
-		marginVertical: percentageDimensions(2, 'height'),
+		marginTop: percentageDimensions(3.2, 'height'),
+		marginBottom: percentageDimensions(1, 'height'),
 	},
 	image: {
 		width: percentageDimensions(55),
