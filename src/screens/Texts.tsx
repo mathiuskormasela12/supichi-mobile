@@ -14,12 +14,18 @@ import {
 import {useSelector, useDispatch} from 'react-redux';
 import jwtDecode from 'jwt-decode';
 import {percentageDimensions} from '../helpers';
-import {IHomeProps, ITextsVoicesGetTextsVoicesQuery} from '../interfaces';
+import {
+	IGetTextVoiceDetail,
+	IHomeProps,
+	ITextsVoicesGetTextsVoicesQuery,
+} from '../interfaces';
 import {Colors, Fonts} from '../themes';
 import {GroupByDayTypes, OrderByTypes} from '../types';
 import emptyStateImage from '../assets/images/empty-state.png';
 import {setTextsAction} from '../redux/actions/data';
 import {setTokens} from '../redux/actions/auth';
+import {setLoading} from '../redux/actions/loading';
+import Service from '../services';
 
 // import all components
 import {Container, Card, DetailModal} from '../components';
@@ -51,6 +57,66 @@ const Texts: React.FC<IHomeProps> = props => {
 	};
 	const {isFromLoginScreen} = props;
 
+	type DetailState = {
+		id: number | null;
+		renderFrom: string;
+		date: string;
+		text: string;
+	};
+
+	const [detail, setDetail] = useState<DetailState>({
+		id: null,
+		renderFrom: '',
+		date: '',
+		text: '',
+	});
+
+	const handleGetDetail = async (id: number) => {
+		if (accessToken && refreshToken && setTokens) {
+			const data: IGetTextVoiceDetail = {
+				id,
+			};
+
+			dispatch(setLoading());
+
+			try {
+				const {data: results} = await Service.getText(
+					accessToken,
+					refreshToken,
+					setTokens,
+					data,
+				);
+				if (
+					results &&
+					results.results &&
+					results.results.renderFrom &&
+					results.results.date &&
+					results.results.text
+				) {
+					setDetail({
+						id,
+						renderFrom: results.results.renderFrom,
+						date: results.results.date,
+						text: results.results.text,
+					});
+					dispatch(setLoading());
+					handleVisible();
+				}
+			} catch (err) {
+				setTimeout(() => {
+					dispatch(setLoading());
+					console.log(err);
+					setDetail({
+						id: null,
+						renderFrom: '',
+						date: '',
+						text: '',
+					});
+				}, 500);
+			}
+		}
+	};
+
 	useEffect(() => {
 		if (accessToken && refreshToken && !isFromLoginScreen) {
 			const decode: any = jwtDecode(accessToken);
@@ -77,11 +143,10 @@ const Texts: React.FC<IHomeProps> = props => {
 				visible={visible}
 				type="text"
 				title="Detail"
-				renderFrom="Image Gallery"
+				renderFrom={detail.renderFrom}
 				buttonText="Close"
-				date="Aug 5, 2022"
-				text="Lorem ipsum dolor sit amet,
-					consectetur adipiscing. "
+				date={detail.date}
+				text={detail.text}
 				onClose={handleVisible}
 			/>
 			{fetching ? (
@@ -102,7 +167,7 @@ const Texts: React.FC<IHomeProps> = props => {
 										text={item.text}
 										time={item.time}
 										type="text"
-										onPress={handleVisible}
+										onPress={() => handleGetDetail(item.id)}
 									/>
 								</Container>
 							)}

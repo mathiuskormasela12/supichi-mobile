@@ -14,12 +14,18 @@ import {
 import {useSelector, useDispatch} from 'react-redux';
 import jwtDecode from 'jwt-decode';
 import {percentageDimensions} from '../helpers';
-import {IHomeProps, ITextsVoicesGetTextsVoicesQuery} from '../interfaces';
+import {
+	IHomeProps,
+	ITextsVoicesGetTextsVoicesQuery,
+	IGetTextVoiceDetail,
+} from '../interfaces';
 import {Colors, Fonts} from '../themes';
 import {GroupByDayTypes, OrderByTypes} from '../types';
 import emptyStateImage from '../assets/images/empty-state.png';
 import {setVoicesAction} from '../redux/actions/data';
 import {setTokens} from '../redux/actions/auth';
+import {setLoading} from '../redux/actions/loading';
+import Service from '../services';
 
 // import all components
 import {Container, Card, DetailModal} from '../components';
@@ -53,6 +59,71 @@ const Voices: React.FC<IHomeProps> = props => {
 
 	const {isFromLoginScreen} = props;
 
+	type DetailState = {
+		id: number | null;
+		renderFrom: string;
+		date: string;
+		text: string;
+		voiceLink: string;
+	};
+
+	const [detail, setDetail] = useState<DetailState>({
+		id: null,
+		renderFrom: '',
+		date: '',
+		text: '',
+		voiceLink: '',
+	});
+
+	const handleGetDetail = async (id: number) => {
+		if (accessToken && refreshToken && setTokens) {
+			const data: IGetTextVoiceDetail = {
+				id,
+			};
+
+			dispatch(setLoading());
+
+			try {
+				const {data: results} = await Service.getVoice(
+					accessToken,
+					refreshToken,
+					setTokens,
+					data,
+				);
+				if (
+					results &&
+					results.results &&
+					results.results.renderFrom &&
+					results.results.date &&
+					results.results.text &&
+					results.results.voiceLink
+				) {
+					setDetail({
+						id,
+						renderFrom: results.results.renderFrom,
+						date: results.results.date,
+						text: results.results.text,
+						voiceLink: results.results.voiceLink,
+					});
+					dispatch(setLoading());
+					handleVisible();
+				}
+			} catch (err) {
+				setTimeout(() => {
+					dispatch(setLoading());
+					console.log(err);
+					setDetail({
+						id: null,
+						renderFrom: '',
+						date: '',
+						text: '',
+						voiceLink: '',
+					});
+				}, 500);
+			}
+		}
+	};
+
 	useEffect(() => {
 		if (accessToken && refreshToken && !isFromLoginScreen) {
 			const decode: any = jwtDecode(accessToken);
@@ -79,11 +150,10 @@ const Voices: React.FC<IHomeProps> = props => {
 				visible={visible}
 				type="voice"
 				title="Detail"
-				renderFrom="Image Gallery"
+				renderFrom={detail.renderFrom}
 				buttonText="Play"
-				date="Aug 5, 2022"
-				text="Lorem ipsum dolor sit amet,
-					consectetur adipiscing. "
+				date={detail.date}
+				text={detail.text}
 				onClose={handleVisible}
 			/>
 			{fetching ? (
@@ -103,8 +173,8 @@ const Voices: React.FC<IHomeProps> = props => {
 									<Card
 										text={item.text}
 										time={item.time}
-										type="text"
-										onPress={handleVisible}
+										type="voice"
+										onPress={() => handleGetDetail(item.id)}
 									/>
 								</Container>
 							)}
@@ -134,8 +204,8 @@ const Voices: React.FC<IHomeProps> = props => {
 										<Card
 											text={item.text}
 											time={item.time}
-											type="text"
-											onPress={handleVisible}
+											type="voice"
+											onPress={() => handleGetDetail(item.id)}
 										/>
 									</Container>
 								)}

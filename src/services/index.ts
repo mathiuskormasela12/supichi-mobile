@@ -7,6 +7,7 @@ import {
 	ISendResetPasswordOtpBody,
 	IResetPasswordBody,
 	ITextsVoicesGetTextsVoicesQuery,
+	IGetTextVoiceDetail,
 } from '../interfaces';
 import {SetTokensAction} from '../types';
 
@@ -55,6 +56,32 @@ class Service {
 			.join('&')}`;
 		return http(accessToken, refreshToken, setToken, dispatch).get(
 			`/voices?${queries}`,
+			data,
+		);
+	}
+
+	public static getText(
+		accessToken: string,
+		refreshToken: string,
+		setToken: SetTokensAction,
+		data: IGetTextVoiceDetail,
+		dispatch?: any,
+	) {
+		return http(accessToken, refreshToken, setToken, dispatch).get(
+			`/text/${data.id}`,
+			data,
+		);
+	}
+
+	public static getVoice(
+		accessToken: string,
+		refreshToken: string,
+		setToken: SetTokensAction,
+		data: IGetTextVoiceDetail,
+		dispatch?: any,
+	) {
+		return http(accessToken, refreshToken, setToken, dispatch).get(
+			`/voice/${data.id}`,
 			data,
 		);
 	}
