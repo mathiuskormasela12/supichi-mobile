@@ -12,6 +12,7 @@ import {
 	StyleSheet,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
+import jwtDecode from 'jwt-decode';
 import {percentageDimensions} from '../helpers';
 import {IHomeProps, ITextsVoicesGetTextsVoicesQuery} from '../interfaces';
 import {Colors, Fonts} from '../themes';
@@ -51,12 +52,14 @@ const Texts: React.FC<IHomeProps> = props => {
 	const {isFromLoginScreen} = props;
 
 	useEffect(() => {
-		const queries: ITextsVoicesGetTextsVoicesQuery = {
-			page: 1,
-			groupByDate: groupByDay,
-			orderBy,
-		};
 		if (accessToken && refreshToken && !isFromLoginScreen) {
+			const decode: any = jwtDecode(accessToken);
+			const queries: ITextsVoicesGetTextsVoicesQuery = {
+				page: 1,
+				id: decode.id,
+				groupByDate: groupByDay,
+				orderBy,
+			};
 			dispatch(setTextsAction(accessToken, refreshToken, setTokens, queries));
 		}
 	}, [

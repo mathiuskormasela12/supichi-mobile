@@ -88,13 +88,14 @@ const SignIn: React.FC = () => {
 			username: state.username,
 			password: state.password,
 		};
-		const queries: ITextsVoicesGetTextsVoicesQuery = {
-			page: 1,
-			groupByDate: 1,
-			orderBy: 'ASC',
-		};
 		try {
 			const {data: results} = await Services.login(data);
+			const queries: ITextsVoicesGetTextsVoicesQuery = {
+				page: 1,
+				id: results.id,
+				groupByDate: 1,
+				orderBy: 'ASC',
+			};
 			dispatch(
 				setTokens(results.results.accessToken, results.results.refreshToken),
 			);
