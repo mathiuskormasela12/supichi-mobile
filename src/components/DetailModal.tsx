@@ -28,8 +28,17 @@ import CopyIcon from '../assets/images/copy-icon.svg';
 import DownloadIcon from '../assets/images/download-icon.svg';
 
 export const DetailModal = (props: IDetailModalProps) => {
-	const {visible, title, buttonText, type, renderFrom, date, text, onClose} =
-		props;
+	const {
+		visible,
+		title,
+		buttonText,
+		type,
+		renderFrom,
+		date,
+		text,
+		onClose,
+		onPlay,
+	} = props;
 
 	return (
 		<Modal animationType="fade" transparent visible={visible}>
@@ -109,7 +118,9 @@ export const DetailModal = (props: IDetailModalProps) => {
 									</View>
 								</View>
 								<View style={styled.btn}>
-									<Button variant="primary" onPress={onClose}>
+									<Button
+										variant="primary"
+										onPress={type === 'text' ? onClose : onPlay}>
 										{buttonText}
 									</Button>
 								</View>

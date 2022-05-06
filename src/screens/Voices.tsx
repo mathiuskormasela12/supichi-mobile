@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import jwtDecode from 'jwt-decode';
+import SoundPlayer from 'react-native-sound-player';
 import {percentageDimensions} from '../helpers';
 import {
 	IHomeProps,
@@ -124,6 +125,14 @@ const Voices: React.FC<IHomeProps> = props => {
 		}
 	};
 
+	const handlePlayVoice = (voiceLink: string) => {
+		try {
+			SoundPlayer.playUrl(voiceLink);
+		} catch (e) {
+			console.log('cannot play the sound file', e);
+		}
+	};
+
 	useEffect(() => {
 		if (accessToken && refreshToken && !isFromLoginScreen) {
 			const decode: any = jwtDecode(accessToken);
@@ -155,6 +164,7 @@ const Voices: React.FC<IHomeProps> = props => {
 				date={detail.date}
 				text={detail.text}
 				onClose={handleVisible}
+				onPlay={() => handlePlayVoice(detail.voiceLink)}
 			/>
 			{fetching ? (
 				<View style={styled.flexContainer}>

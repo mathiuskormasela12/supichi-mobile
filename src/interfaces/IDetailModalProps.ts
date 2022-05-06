@@ -10,4 +10,5 @@ export interface IDetailModalProps {
 	date: string;
 	text: string;
 	onClose: () => void;
+	onPlay: () => void;
 }
