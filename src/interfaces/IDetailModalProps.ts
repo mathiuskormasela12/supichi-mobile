@@ -9,6 +9,6 @@ export interface IDetailModalProps {
 	renderFrom: string;
 	date: string;
 	text: string;
+	voiceLink?: string;
 	onClose: () => void;
-	onPlay: () => void;
 }
