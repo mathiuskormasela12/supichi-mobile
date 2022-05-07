@@ -48,11 +48,15 @@ export const setTextsVoicesAction: ReduxSetTextsVoicesAction = (
 
 export const setVoicesAction: ReduxSetTextsVoicesAction = (
 	queries: ITextsVoicesGetTextsVoicesQuery,
+	withoutLoading?: boolean,
 ) => {
 	return async (dispatch: any) => {
-		dispatch({
-			type: 'FETCHING_VOICES',
-		});
+		if (!withoutLoading) {
+			dispatch({
+				type: 'FETCHING_VOICES',
+			});
+		}
+
 		try {
 			const {data: voices} = await Services.getAllVoices(queries);
 			dispatch({
@@ -63,11 +67,13 @@ export const setVoicesAction: ReduxSetTextsVoicesAction = (
 					},
 				},
 			});
-			setTimeout(() => {
-				dispatch({
-					type: 'FETCHING_VOICES',
-				});
-			}, 500);
+			if (!withoutLoading) {
+				setTimeout(() => {
+					dispatch({
+						type: 'FETCHING_VOICES',
+					});
+				}, 500);
+			}
 		} catch (err: any) {
 			console.log(err);
 			dispatch({
@@ -78,22 +84,27 @@ export const setVoicesAction: ReduxSetTextsVoicesAction = (
 					},
 				},
 			});
-			setTimeout(() => {
-				dispatch({
-					type: 'FETCHING_VOICES',
-				});
-			}, 500);
+			if (!withoutLoading) {
+				setTimeout(() => {
+					dispatch({
+						type: 'FETCHING_VOICES',
+					});
+				}, 500);
+			}
 		}
 	};
 };
 
 export const setTextsAction: ReduxSetTextsVoicesAction = (
 	queries: ITextsVoicesGetTextsVoicesQuery,
+	withoutLoading?: boolean,
 ) => {
 	return async (dispatch: any) => {
-		dispatch({
-			type: 'FETCHING_TEXTS',
-		});
+		if (!withoutLoading) {
+			dispatch({
+				type: 'FETCHING_TEXTS',
+			});
+		}
 		try {
 			const {data: texts} = await Services.getAllTexts(queries);
 			dispatch({
@@ -104,11 +115,13 @@ export const setTextsAction: ReduxSetTextsVoicesAction = (
 					},
 				},
 			});
-			setTimeout(() => {
-				dispatch({
-					type: 'FETCHING_TEXTS',
-				});
-			}, 500);
+			if (!withoutLoading) {
+				setTimeout(() => {
+					dispatch({
+						type: 'FETCHING_TEXTS',
+					});
+				}, 500);
+			}
 		} catch (err: any) {
 			console.log(err);
 			dispatch({
@@ -119,11 +132,13 @@ export const setTextsAction: ReduxSetTextsVoicesAction = (
 					},
 				},
 			});
-			setTimeout(() => {
-				dispatch({
-					type: 'FETCHING_TEXTS',
-				});
-			}, 500);
+			if (!withoutLoading) {
+				setTimeout(() => {
+					dispatch({
+						type: 'FETCHING_TEXTS',
+					});
+				}, 500);
+			}
 		}
 	};
 };

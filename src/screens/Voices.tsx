@@ -130,14 +130,8 @@ const Voices: React.FC<IHomeProps> = props => {
 			};
 			dispatch(setVoicesAction(queries));
 		}
-	}, [
-		accessToken,
-		refreshToken,
-		dispatch,
-		isFromLoginScreen,
-		groupByDay,
-		orderBy,
-	]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [groupByDay, orderBy]);
 
 	return (
 		<SafeAreaView style={styled.hero}>

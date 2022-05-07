@@ -114,6 +114,8 @@ const ResetPassword: React.FC = () => {
 						err.response.data &&
 						err.response.data.message
 							? err.response.data.message
+							: err && err.message
+							? err.message
 							: 'Server Error',
 				}));
 			}, 500);

@@ -147,7 +147,7 @@ export const BottomTabs: any = (props: any) => {
 					groupByDate: groupByDay,
 					orderBy,
 				};
-				dispatch(setVoicesAction(queries));
+				dispatch(setVoicesAction(queries, true));
 				dispatch({
 					type: 'SET_LOADING',
 				});
