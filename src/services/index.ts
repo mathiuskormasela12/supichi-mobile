@@ -8,7 +8,9 @@ import {
 	IResetPasswordBody,
 	ITextsVoicesGetTextsVoicesQuery,
 	IGetTextVoiceDetail,
+	IGenerateTextAndVoice,
 } from '../interfaces';
+import {generateFormData} from '../helpers';
 
 class Service {
 	public static login(data: ILoginBody) {
@@ -47,6 +49,11 @@ class Service {
 
 	public static getVoice(data: IGetTextVoiceDetail) {
 		return http().get(`/voice/${data.id}`);
+	}
+
+	public static generateVoice(data: IGenerateTextAndVoice) {
+		const formData = generateFormData(data);
+		return http().post('/voice', formData);
 	}
 }
 

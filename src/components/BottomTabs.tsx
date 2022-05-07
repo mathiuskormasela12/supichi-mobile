@@ -12,9 +12,19 @@ import {
 	StyleSheet,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
+import {launchImageLibrary} from 'react-native-image-picker';
+import jwtDecode from 'jwt-decode';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
+import {
+	IGenerateTextAndVoice,
+	ITextsVoicesGetTextsVoicesQuery,
+} from '../interfaces';
+import {OrderByTypes, GroupByDayTypes} from '../types';
 import {setTokens} from '../redux/actions/auth';
+import {setVoicesAction} from '../redux/actions/data';
+import Service from '../services';
+import {LANGUAGES} from '../constants/LANGUAGES';
 
 // import all components
 import {DetailModal} from './';
@@ -27,7 +37,6 @@ import UserIconDisabled from '../assets/images/user-icon-disabled.svg';
 import UserIcon from '../assets/images/user-icon.svg';
 import LogoutIcon from '../assets/images/logout-icon.svg';
 import CameraIcon from '../assets/images/camera-icon.svg';
-import {LANGUAGES} from '../constants/LANGUAGES';
 
 export const BottomTabs: any = (props: any) => {
 	const {
@@ -36,13 +45,25 @@ export const BottomTabs: any = (props: any) => {
 	} = props;
 	const dispatch = useDispatch();
 	const [visible, setVisible] = useState(false);
+	const [isCamera, setIsCamera] = useState(false);
 	const [detailModalVisible, setDetailModalVisible] = useState(false);
 	const tabViewIndex: number = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.tabViewIndex.tabViewIndex,
 	);
+	const accessToken: string | null = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.auth.accessToken,
+	);
+	const groupByDay: GroupByDayTypes = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.filter.groupByDay,
+	);
+	const orderBy: OrderByTypes = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.filter.orderBy,
+	);
 
-	const showFilterModal = () =>
+	const showLanguageModal = (isCameraParam: boolean) => {
 		setVisible((currentVisible: boolean) => !currentVisible);
+		setIsCamera(isCameraParam);
+	};
 
 	const navigateTo = (screen: string) => navigation.navigate(screen);
 
@@ -56,6 +77,76 @@ export const BottomTabs: any = (props: any) => {
 	const handleLogout = () => {
 		dispatch(setTokens(null, null));
 		navigateTo('SignIn');
+	};
+
+	const handleImageLibrary = async (languageKey: string) => {
+		try {
+			const response = await launchImageLibrary({
+				mediaType: 'photo',
+				includeBase64: false,
+				quality: 0.5,
+			});
+
+			if (
+				response.assets &&
+				response.assets.length > 0 &&
+				response.assets[0].uri &&
+				response.assets[0].type &&
+				response.assets[0].fileName
+			) {
+				const data: IGenerateTextAndVoice = {
+					renderFrom: 'Image Gallery',
+					language: languageKey,
+					photo: {
+						uri: response.assets[0].uri,
+						name: response.assets[0].fileName,
+						type: response.assets[0].type,
+					},
+				};
+				generateVoice(data);
+			}
+		} catch (err: any) {
+			console.log(err.message);
+		}
+	};
+
+	const handleSelectLanguage = (renderFrom: string, languageKey: string) => {
+		switch (renderFrom) {
+			case 'CAMERA':
+				showLanguageModal(true);
+				break;
+
+			default:
+				showLanguageModal(true);
+				handleImageLibrary(languageKey);
+		}
+	};
+
+	const generateVoice = async (data: IGenerateTextAndVoice) => {
+		if (accessToken) {
+			dispatch({
+				type: 'SET_LOADING',
+			});
+			try {
+				await Service.generateVoice(data);
+				const decode: any = jwtDecode(accessToken);
+				const queries: ITextsVoicesGetTextsVoicesQuery = {
+					page: 1,
+					id: decode.id,
+					groupByDate: groupByDay,
+					orderBy,
+				};
+				dispatch(setVoicesAction(queries));
+				dispatch({
+					type: 'SET_LOADING',
+				});
+			} catch (err: any) {
+				dispatch({
+					type: 'SET_LOADING',
+				});
+				console.log(JSON.stringify(err));
+			}
+		}
 	};
 
 	return (
@@ -73,7 +164,7 @@ export const BottomTabs: any = (props: any) => {
 					onClose={handleDetailModalVisible}
 				/>
 				<Modal animationType="fade" transparent visible={visible}>
-					<TouchableWithoutFeedback onPress={showFilterModal}>
+					<TouchableWithoutFeedback onPress={() => showLanguageModal(true)}>
 						<SafeAreaView style={styled.modal}>
 							<View style={styled.languagesBox}>
 								<View style={styled.list}>
@@ -81,7 +172,12 @@ export const BottomTabs: any = (props: any) => {
 										<TouchableOpacity
 											key={item.id.toString()}
 											style={styled.items}
-											onPress={handleDetailModalVisible}>
+											onPress={() =>
+												handleSelectLanguage(
+													isCamera ? 'Camera' : 'Image Gallery',
+													item.key,
+												)
+											}>
 											<Text style={styled.listText}>{item.name}</Text>
 										</TouchableOpacity>
 									))}
@@ -102,14 +198,14 @@ export const BottomTabs: any = (props: any) => {
 						</TouchableOpacity>
 					</View>
 					<View style={styled.tabLists}>
-						<TouchableOpacity onPress={showFilterModal}>
+						<TouchableOpacity onPress={() => showLanguageModal(false)}>
 							<ImageIcon style={styled.imageIcon} />
 							<Text style={styled.text}>Image</Text>
 						</TouchableOpacity>
 					</View>
 					<View style={styled.tabLists}>
 						<View style={styled.cameraCircleContainer}>
-							<TouchableOpacity onPress={showFilterModal}>
+							<TouchableOpacity onPress={() => showLanguageModal(true)}>
 								<CameraIcon width={percentageDimensions(8)} />
 							</TouchableOpacity>
 						</View>

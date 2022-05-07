@@ -26,3 +26,4 @@ export * from './IAuthBody';
 export * from './ITextsVoicesGetTextsVoicesQuery';
 export * from './IHomeProps';
 export * from './IGetTextVoiceDetail';
+export * from './IGenerateTextAndVoice';
