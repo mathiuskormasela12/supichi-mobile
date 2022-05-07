@@ -1,6 +1,6 @@
 // ========== Bottom Tabs
 // import all modules
-import React, {Fragment, useState} from 'react';
+import React, {Fragment, useState, useRef} from 'react';
 import {
 	View,
 	SafeAreaView,
@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {launchImageLibrary} from 'react-native-image-picker';
+import {CropView} from 'react-native-image-crop-tools';
 import jwtDecode from 'jwt-decode';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
@@ -20,7 +21,7 @@ import {
 	IGenerateTextAndVoice,
 	ITextsVoicesGetTextsVoicesQuery,
 } from '../interfaces';
-import {OrderByTypes, GroupByDayTypes} from '../types';
+import {OrderByTypes, GroupByDayTypes, RenderFromType} from '../types';
 import {setTokens} from '../redux/actions/auth';
 import {setVoicesAction} from '../redux/actions/data';
 import Service from '../services';
@@ -37,6 +38,8 @@ import UserIconDisabled from '../assets/images/user-icon-disabled.svg';
 import UserIcon from '../assets/images/user-icon.svg';
 import LogoutIcon from '../assets/images/logout-icon.svg';
 import CameraIcon from '../assets/images/camera-icon.svg';
+import {Button} from './Button';
+import {Container} from './Container';
 
 export const BottomTabs: any = (props: any) => {
 	const {
@@ -44,8 +47,11 @@ export const BottomTabs: any = (props: any) => {
 		state: {index},
 	} = props;
 	const dispatch = useDispatch();
+	const cropViewRef = useRef<any>();
 	const [visible, setVisible] = useState(false);
-	const [isCamera, setIsCamera] = useState(false);
+	const [renderFrom, setRenderFrom] = useState<RenderFromType>('Camera');
+	const [uri, setUri] = useState<string>('');
+	const [languageKey, setLanguageKey] = useState<string>('');
 	const [detailModalVisible, setDetailModalVisible] = useState(false);
 	const tabViewIndex: number = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.tabViewIndex.tabViewIndex,
@@ -60,9 +66,9 @@ export const BottomTabs: any = (props: any) => {
 		(currentGlobalStates: any) => currentGlobalStates.filter.orderBy,
 	);
 
-	const showLanguageModal = (isCameraParam: boolean) => {
+	const showLanguageModal = (renderFromParam: RenderFromType) => {
 		setVisible((currentVisible: boolean) => !currentVisible);
-		setIsCamera(isCameraParam);
+		setRenderFrom(renderFromParam);
 	};
 
 	const navigateTo = (screen: string) => navigation.navigate(screen);
@@ -79,7 +85,7 @@ export const BottomTabs: any = (props: any) => {
 		navigateTo('SignIn');
 	};
 
-	const handleImageLibrary = async (languageKey: string) => {
+	const handleImageLibrary = async (languageKeyParam: string) => {
 		try {
 			const response = await launchImageLibrary({
 				mediaType: 'photo',
@@ -94,31 +100,36 @@ export const BottomTabs: any = (props: any) => {
 				response.assets[0].type &&
 				response.assets[0].fileName
 			) {
-				const data: IGenerateTextAndVoice = {
-					renderFrom: 'Image Gallery',
-					language: languageKey,
-					photo: {
-						uri: response.assets[0].uri,
-						name: response.assets[0].fileName,
-						type: response.assets[0].type,
-					},
-				};
-				generateVoice(data);
+				// const data: IGenerateTextAndVoice = {
+				// 	renderFrom: 'Image Gallery',
+				// 	language: languageKey,
+				// 	photo: {
+				// 		uri: response.assets[0].uri,
+				// 		name: response.assets[0].fileName,
+				// 		type: response.assets[0].type,
+				// 	},
+				// };
+				// generateVoice(data);
+				setUri(response.assets[0].uri);
+				setLanguageKey(languageKeyParam);
 			}
 		} catch (err: any) {
 			console.log(err.message);
 		}
 	};
 
-	const handleSelectLanguage = (renderFrom: string, languageKey: string) => {
+	const handleSelectLanguage = (
+		renderFromParam: RenderFromType,
+		languageKeyParam: string,
+	) => {
 		switch (renderFrom) {
-			case 'CAMERA':
-				showLanguageModal(true);
+			case 'Camera':
+				showLanguageModal(renderFromParam);
 				break;
 
 			default:
-				showLanguageModal(true);
-				handleImageLibrary(languageKey);
+				showLanguageModal(renderFromParam);
+				handleImageLibrary(languageKeyParam);
 		}
 	};
 
@@ -149,8 +160,55 @@ export const BottomTabs: any = (props: any) => {
 		}
 	};
 
+	const handleCancelCrop = () => {
+		setUri('');
+		setLanguageKey('');
+	};
+
+	const handleSaveCroppedImage = () => cropViewRef.current.saveImage(true, 90);
+
+	const handleOnImageCrop = (croppedImageUri: string) => {
+		const data: IGenerateTextAndVoice = {
+			renderFrom,
+			language: languageKey,
+			photo: {
+				uri: croppedImageUri,
+				name: String(Date.now()),
+				type: 'image/jpg',
+			},
+		};
+		generateVoice(data);
+		setUri('');
+		setLanguageKey('');
+		setRenderFrom('Camera');
+	};
+
 	return (
 		<Fragment>
+			{uri !== '' && (
+				<View style={styled.cropViewContainer}>
+					<Container size={85}>
+						<CropView
+							sourceUrl={uri}
+							style={styled.cropView}
+							ref={cropViewRef}
+							onImageCrop={res => handleOnImageCrop(`file://${res.uri}`)}
+						/>
+					</Container>
+					<View style={styled.cropViewButton}>
+						<Container size={85}>
+							<View style={styled.cropButtonMargin}>
+								<Button variant="primary" onPress={handleSaveCroppedImage}>
+									Crop
+								</Button>
+							</View>
+							<Button variant="danger" onPress={handleCancelCrop}>
+								Cancel
+							</Button>
+						</Container>
+					</View>
+				</View>
+			)}
 			<SafeAreaView>
 				<DetailModal
 					visible={detailModalVisible}
@@ -164,7 +222,7 @@ export const BottomTabs: any = (props: any) => {
 					onClose={handleDetailModalVisible}
 				/>
 				<Modal animationType="fade" transparent visible={visible}>
-					<TouchableWithoutFeedback onPress={() => showLanguageModal(true)}>
+					<TouchableWithoutFeedback onPress={() => showLanguageModal('Camera')}>
 						<SafeAreaView style={styled.modal}>
 							<View style={styled.languagesBox}>
 								<View style={styled.list}>
@@ -173,10 +231,7 @@ export const BottomTabs: any = (props: any) => {
 											key={item.id.toString()}
 											style={styled.items}
 											onPress={() =>
-												handleSelectLanguage(
-													isCamera ? 'Camera' : 'Image Gallery',
-													item.key,
-												)
+												handleSelectLanguage(renderFrom, item.key)
 											}>
 											<Text style={styled.listText}>{item.name}</Text>
 										</TouchableOpacity>
@@ -198,14 +253,15 @@ export const BottomTabs: any = (props: any) => {
 						</TouchableOpacity>
 					</View>
 					<View style={styled.tabLists}>
-						<TouchableOpacity onPress={() => showLanguageModal(false)}>
+						<TouchableOpacity
+							onPress={() => showLanguageModal('Image Gallery')}>
 							<ImageIcon style={styled.imageIcon} />
 							<Text style={styled.text}>Image</Text>
 						</TouchableOpacity>
 					</View>
 					<View style={styled.tabLists}>
 						<View style={styled.cameraCircleContainer}>
-							<TouchableOpacity onPress={() => showLanguageModal(true)}>
+							<TouchableOpacity onPress={() => showLanguageModal('Camera')}>
 								<CameraIcon width={percentageDimensions(8)} />
 							</TouchableOpacity>
 						</View>
@@ -320,5 +376,23 @@ const styled = StyleSheet.create({
 	},
 	activeTab: {
 		backgroundColor: 'red',
+	},
+	cropViewContainer: {
+		backgroundColor: Colors.dark,
+		zIndex: 1,
+	},
+	cropView: {
+		height: percentageDimensions(80, 'height'),
+		backgroundColor: Colors.dark,
+		zIndex: 1,
+	},
+	cropViewButton: {
+		height: percentageDimensions(20, 'height'),
+		backgroundColor: Colors.dark,
+		justifyContent: 'center',
+		zIndex: 1,
+	},
+	cropButtonMargin: {
+		marginBottom: percentageDimensions(2, 'height'),
 	},
 });

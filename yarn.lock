@@ -6580,6 +6580,11 @@ react-native-gradle-plugin@^0.0.6:
   resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.0.6.tgz#b61a9234ad2f61430937911003cddd7e15c72b45"
   integrity sha512-eIlgtsmDp1jLC24dRn43hB3kEcZVqx6DUQbR0N1ABXGnMEafm9I3V3dUUeD1vh+Dy5WqijSoEwLNUPLgu5zDMg==
 
+react-native-image-crop-tools@^1.6.2:
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/react-native-image-crop-tools/-/react-native-image-crop-tools-1.6.2.tgz#df5c4311cb7b4f7295ad5ac7a2024e73ed57f4b7"
+  integrity sha512-yndxSrHTCKPxxXlkCS62JQzlSlAK/K4pxyqu+IfacK/baykfXvSB7ps7WB74C0gFFnhfXSrgcktrjHMjJwXTyA==
+
 react-native-image-picker@^4.8.2:
   version "4.8.2"
   resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-4.8.2.tgz#a70c689879a042c1d7b7d585759831d2174c344d"

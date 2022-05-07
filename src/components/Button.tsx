@@ -16,11 +16,20 @@ export const Button: React.FC<IButtonProps> = props => {
 				!disabled
 					? variant === 'primary'
 						? styled.buttonPrimary
+						: variant === 'danger'
+						? styled.buttonDanger
 						: styled.buttonLight
 					: styled.buttonDisabled
 			}
 			onPress={onPress}>
-			<Text style={variant === 'primary' ? styled.textLight : styled.textDark}>
+			<Text
+				style={
+					variant === 'primary'
+						? styled.textLight
+						: variant === 'danger'
+						? styled.textLight
+						: styled.textDark
+				}>
 				{children}
 			</Text>
 		</TouchableOpacity>
@@ -37,6 +46,14 @@ const styled = StyleSheet.create({
 		width: '100%',
 		height: percentageDimensions(6.5, 'height'),
 		backgroundColor: Colors.primary,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	buttonDanger: {
+		borderRadius: 5,
+		width: '100%',
+		height: percentageDimensions(6.5, 'height'),
+		backgroundColor: Colors.danger,
 		alignItems: 'center',
 		justifyContent: 'center',
 	},

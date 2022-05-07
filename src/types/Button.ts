@@ -1,3 +1,3 @@
 // ========== Button
 
-export type ButtonVariant = 'primary' | 'light';
+export type ButtonVariant = 'primary' | 'light' | 'danger';
