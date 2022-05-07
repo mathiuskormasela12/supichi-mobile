@@ -12,7 +12,7 @@ import {
 	StyleSheet,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import {CropView} from 'react-native-image-crop-tools';
 import jwtDecode from 'jwt-decode';
 import {percentageDimensions} from '../helpers';
@@ -100,16 +100,29 @@ export const BottomTabs: any = (props: any) => {
 				response.assets[0].type &&
 				response.assets[0].fileName
 			) {
-				// const data: IGenerateTextAndVoice = {
-				// 	renderFrom: 'Image Gallery',
-				// 	language: languageKey,
-				// 	photo: {
-				// 		uri: response.assets[0].uri,
-				// 		name: response.assets[0].fileName,
-				// 		type: response.assets[0].type,
-				// 	},
-				// };
-				// generateVoice(data);
+				setUri(response.assets[0].uri);
+				setLanguageKey(languageKeyParam);
+			}
+		} catch (err: any) {
+			console.log(err.message);
+		}
+	};
+
+	const handleCamera = async (languageKeyParam: string) => {
+		try {
+			const response = await launchCamera({
+				mediaType: 'photo',
+				includeBase64: false,
+				quality: 0.5,
+			});
+
+			if (
+				response.assets &&
+				response.assets.length > 0 &&
+				response.assets[0].uri &&
+				response.assets[0].type &&
+				response.assets[0].fileName
+			) {
 				setUri(response.assets[0].uri);
 				setLanguageKey(languageKeyParam);
 			}
@@ -125,6 +138,7 @@ export const BottomTabs: any = (props: any) => {
 		switch (renderFrom) {
 			case 'Camera':
 				showLanguageModal(renderFromParam);
+				handleCamera(languageKeyParam);
 				break;
 
 			default:

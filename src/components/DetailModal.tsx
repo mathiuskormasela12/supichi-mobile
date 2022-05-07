@@ -96,7 +96,11 @@ export const DetailModal = (props: IDetailModalProps) => {
 						<View style={styled.box}>
 							<Container size={75}>
 								<View style={styled.header}>
-									<TouchableOpacity onPress={onClose}>
+									<TouchableOpacity
+										onPress={() => {
+											handleStopVoice();
+											onClose();
+										}}>
 										<CloseIcon
 											width={percentageDimensions(4.2)}
 											height={percentageDimensions(4.2, 'height')}
