@@ -187,7 +187,7 @@ const Texts: React.FC<IHomeProps> = props => {
 											text={item.text}
 											time={item.time}
 											type="text"
-											onPress={handleVisible}
+											onPress={() => handleGetDetail(item.id)}
 										/>
 									</Container>
 								)}

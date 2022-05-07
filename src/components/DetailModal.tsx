@@ -89,8 +89,8 @@ export const DetailModal = (props: IDetailModalProps) => {
 
 	return (
 		<Modal animationType="fade" transparent visible={visible}>
+			<View style={styled.background} />
 			<SafeAreaView>
-				<View style={styled.background} />
 				<ScrollView>
 					<View style={styled.wrapper}>
 						<View style={styled.box}>

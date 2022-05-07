@@ -55,6 +55,11 @@ class Service {
 		const formData = generateFormData(data);
 		return http().post('/voice', formData);
 	}
+
+	public static generateText(data: IGenerateTextAndVoice) {
+		const formData = generateFormData(data);
+		return http().post('/text', formData);
+	}
 }
 
 export default Service;

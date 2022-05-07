@@ -23,7 +23,7 @@ import {
 } from '../interfaces';
 import {OrderByTypes, GroupByDayTypes, RenderFromType} from '../types';
 import {setTokens} from '../redux/actions/auth';
-import {setVoicesAction} from '../redux/actions/data';
+import {setTextsAction, setVoicesAction} from '../redux/actions/data';
 import Service from '../services';
 import {LANGUAGES} from '../constants/LANGUAGES';
 
@@ -160,6 +160,33 @@ export const BottomTabs: any = (props: any) => {
 		}
 	};
 
+	const generateText = async (data: IGenerateTextAndVoice) => {
+		if (accessToken) {
+			dispatch({
+				type: 'SET_LOADING',
+			});
+			try {
+				await Service.generateText(data);
+				const decode: any = jwtDecode(accessToken);
+				const queries: ITextsVoicesGetTextsVoicesQuery = {
+					page: 1,
+					id: decode.id,
+					groupByDate: groupByDay,
+					orderBy,
+				};
+				dispatch(setTextsAction(queries, true));
+				dispatch({
+					type: 'SET_LOADING',
+				});
+			} catch (err: any) {
+				dispatch({
+					type: 'SET_LOADING',
+				});
+				console.log(JSON.stringify(err));
+			}
+		}
+	};
+
 	const handleCancelCrop = () => {
 		setUri('');
 		setLanguageKey('');
@@ -177,7 +204,11 @@ export const BottomTabs: any = (props: any) => {
 				type: 'image/jpg',
 			},
 		};
-		generateVoice(data);
+		if (tabViewIndex === 0) {
+			generateText(data);
+		} else {
+			generateVoice(data);
+		}
 		setUri('');
 		setLanguageKey('');
 		setRenderFrom('Camera');
