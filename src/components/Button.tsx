@@ -7,7 +7,35 @@ import {IButtonProps} from '../interfaces';
 import {Colors, Fonts} from '../themes';
 
 export const Button: React.FC<IButtonProps> = props => {
-	const {onPress, variant, children, disabled} = props;
+	const {onPress, variant, children, disabled, small} = props;
+
+	if (small) {
+		return (
+			<TouchableOpacity
+				disabled={disabled}
+				style={
+					!disabled
+						? variant === 'primary'
+							? styled.buttonSmallPrimary
+							: variant === 'danger'
+							? styled.buttonSmallDanger
+							: styled.buttonSmallLight
+						: styled.buttonSmallDisabled
+				}
+				onPress={onPress}>
+				<Text
+					style={
+						variant === 'primary'
+							? styled.textLight
+							: variant === 'danger'
+							? styled.textLight
+							: styled.textDark
+					}>
+					{children}
+				</Text>
+			</TouchableOpacity>
+		);
+	}
 
 	return (
 		<TouchableOpacity
@@ -68,6 +96,37 @@ const styled = StyleSheet.create({
 	buttonLight: {
 		borderRadius: 5,
 		height: percentageDimensions(6.5, 'height'),
+		backgroundColor: Colors.white,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	buttonSmallPrimary: {
+		borderRadius: 5,
+		width: '100%',
+		height: percentageDimensions(5.7, 'height'),
+		backgroundColor: Colors.primary,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	buttonSmallDanger: {
+		borderRadius: 5,
+		width: '100%',
+		height: percentageDimensions(5.7, 'height'),
+		backgroundColor: Colors.danger,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	buttonSmallDisabled: {
+		borderRadius: 5,
+		width: '100%',
+		height: percentageDimensions(5.7, 'height'),
+		backgroundColor: Colors.youngLigthGray,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	buttonSmallLight: {
+		borderRadius: 5,
+		height: percentageDimensions(5.7, 'height'),
 		backgroundColor: Colors.white,
 		alignItems: 'center',
 		justifyContent: 'center',

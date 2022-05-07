@@ -7,3 +7,4 @@ export * from './TextField';
 export * from './BottomTabs';
 export * from './Card';
 export * from './DetailModal';
+export * from './SweetAlert';

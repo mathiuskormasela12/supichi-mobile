@@ -60,6 +60,14 @@ class Service {
 		const formData = generateFormData(data);
 		return http().post('/text', formData);
 	}
+
+	public static deleteText(data: IGetTextVoiceDetail) {
+		return http().delete(`/text/${data.id}`);
+	}
+
+	public static deleteVoice(data: IGetTextVoiceDetail) {
+		return http().delete(`/voice/${data.id}`);
+	}
 }
 
 export default Service;

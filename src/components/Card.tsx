@@ -15,7 +15,7 @@ import CopyIcon from '../assets/images/copy-icon.svg';
 import DownloadIcon from '../assets/images/download-icon.svg';
 
 export const Card = (props: ICardProps) => {
-	const {text, time, type, onPress} = props;
+	const {text, time, type, onPress, onDelete} = props;
 
 	const rightSwipe = () => (
 		<TouchableOpacity activeOpacity={0.6}>
@@ -32,7 +32,7 @@ export const Card = (props: ICardProps) => {
 					)}
 				</View>
 				<View style={styled.actionCardCol}>
-					<TouchableOpacity>
+					<TouchableOpacity onPress={onDelete}>
 						<TrashIcon />
 					</TouchableOpacity>
 				</View>

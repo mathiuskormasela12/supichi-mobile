@@ -20,7 +20,7 @@ import {
 	ITextsVoicesGetTextsVoicesQuery,
 } from '../interfaces';
 import {Colors, Fonts} from '../themes';
-import {GroupByDayTypes, OrderByTypes} from '../types';
+import {AlertType, GroupByDayTypes, OrderByTypes} from '../types';
 import emptyStateImage from '../assets/images/empty-state.png';
 import {setTextsAction} from '../redux/actions/data';
 import {setTokens} from '../redux/actions/auth';
@@ -28,7 +28,7 @@ import {setLoading} from '../redux/actions/loading';
 import Service from '../services';
 
 // import all components
-import {Container, Card, DetailModal} from '../components';
+import {Container, Card, DetailModal, SweetAlert} from '../components';
 
 const Texts: React.FC<IHomeProps> = props => {
 	const dispatch = useDispatch();
@@ -51,6 +51,7 @@ const Texts: React.FC<IHomeProps> = props => {
 		(currentGlobalStates: any) => currentGlobalStates.filter.orderBy,
 	);
 	const [visible, setVisible] = useState(false);
+	const [textId, setTextId] = useState<number | null>(null);
 
 	const handleVisible = () => {
 		setVisible((currentVisible: boolean) => !currentVisible);
@@ -70,6 +71,87 @@ const Texts: React.FC<IHomeProps> = props => {
 		date: '',
 		text: '',
 	});
+
+	const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+
+	type ErrorMessage = {
+		visible: boolean;
+		title: string;
+		subtitle: string;
+		type: AlertType;
+	};
+	const [errorMessage, setErrorMessage] = useState<ErrorMessage>({
+		visible: false,
+		title: '',
+		subtitle: '',
+		type: 'failed',
+	});
+
+	const onOkDelete = async () => {
+		setDeleteConfirmation(false);
+
+		if (textId) {
+			dispatch(setLoading());
+			try {
+				const {data} = await Service.deleteText({id: textId});
+				setTimeout(() => {
+					dispatch(setLoading());
+					setErrorMessage({
+						visible: true,
+						title: 'Success',
+						type: 'success',
+						subtitle: data.message,
+					});
+				}, 500);
+			} catch (err: any) {
+				setTimeout(() => {
+					dispatch(setLoading());
+					console.log(err);
+					setErrorMessage({
+						visible: true,
+						title: 'Failed',
+						type: 'failed',
+						subtitle:
+							err &&
+							err.response &&
+							err.response.data &&
+							err.response.data.message
+								? err.response.data.message
+								: err && err.message
+								? err.message
+								: 'Server Error',
+					});
+				}, 500);
+			}
+		}
+	};
+	const onCancelDelete = () => {
+		setDeleteConfirmation(false);
+	};
+
+	const handleCloseSweetAlert = () => {
+		if (accessToken) {
+			const decode: any = jwtDecode(accessToken);
+			const queries: ITextsVoicesGetTextsVoicesQuery = {
+				page: 1,
+				id: decode.id,
+				groupByDate: groupByDay,
+				orderBy,
+			};
+			dispatch(setTextsAction(queries));
+		}
+		setErrorMessage({
+			visible: false,
+			title: '',
+			subtitle: '',
+			type: 'failed',
+		});
+	};
+
+	const onSelectCard = (id: number) => {
+		setDeleteConfirmation(true);
+		setTextId(id);
+	};
 
 	const handleGetDetail = async (id: number) => {
 		if (accessToken && refreshToken && setTokens) {
@@ -101,12 +183,7 @@ const Texts: React.FC<IHomeProps> = props => {
 				setTimeout(() => {
 					dispatch(setLoading());
 					console.log(err);
-					setDetail({
-						id: null,
-						renderFrom: '',
-						date: '',
-						text: '',
-					});
+					// setE
 				}, 500);
 			}
 		}
@@ -138,6 +215,21 @@ const Texts: React.FC<IHomeProps> = props => {
 				text={detail.text}
 				onClose={handleVisible}
 			/>
+			<SweetAlert
+				visible={deleteConfirmation}
+				type="confirmation"
+				title="Remove Text"
+				subtitle="Are you sure to remove this one?"
+				onOk={onOkDelete}
+				onCancel={onCancelDelete}
+			/>
+			<SweetAlert
+				visible={errorMessage.visible}
+				type={errorMessage.type}
+				title={errorMessage.title}
+				subtitle={errorMessage.subtitle}
+				onOk={handleCloseSweetAlert}
+			/>
 			{fetching ? (
 				<View style={styled.flexContainer}>
 					<ActivityIndicator size="large" color={Colors.primary} />
@@ -157,6 +249,7 @@ const Texts: React.FC<IHomeProps> = props => {
 										time={item.time}
 										type="text"
 										onPress={() => handleGetDetail(item.id)}
+										onDelete={() => onSelectCard(item.id)}
 									/>
 								</Container>
 							)}
@@ -188,6 +281,7 @@ const Texts: React.FC<IHomeProps> = props => {
 											time={item.time}
 											type="text"
 											onPress={() => handleGetDetail(item.id)}
+											onDelete={() => onSelectCard(item.id)}
 										/>
 									</Container>
 								)}

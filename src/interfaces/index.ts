@@ -27,3 +27,4 @@ export * from './ITextsVoicesGetTextsVoicesQuery';
 export * from './IHomeProps';
 export * from './IGetTextVoiceDetail';
 export * from './IGenerateTextAndVoice';
+export * from './ISweetAlertProps';

@@ -20,7 +20,7 @@ import {
 	IGetTextVoiceDetail,
 } from '../interfaces';
 import {Colors, Fonts} from '../themes';
-import {GroupByDayTypes, OrderByTypes} from '../types';
+import {AlertType, GroupByDayTypes, OrderByTypes} from '../types';
 import emptyStateImage from '../assets/images/empty-state.png';
 import {setVoicesAction} from '../redux/actions/data';
 import {setTokens} from '../redux/actions/auth';
@@ -28,7 +28,7 @@ import {setLoading} from '../redux/actions/loading';
 import Service from '../services';
 
 // import all components
-import {Container, Card, DetailModal} from '../components';
+import {Container, Card, DetailModal, SweetAlert} from '../components';
 
 const Voices: React.FC<IHomeProps> = props => {
 	const dispatch = useDispatch();
@@ -52,6 +52,7 @@ const Voices: React.FC<IHomeProps> = props => {
 	);
 
 	const [visible, setVisible] = useState(false);
+	const [voiceId, setVoiceId] = useState<number | null>(null);
 
 	const handleVisible = () => {
 		setVisible((currentVisible: boolean) => !currentVisible);
@@ -74,6 +75,87 @@ const Voices: React.FC<IHomeProps> = props => {
 		text: '',
 		voiceLink: '',
 	});
+
+	const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+
+	type ErrorMessage = {
+		visible: boolean;
+		title: string;
+		subtitle: string;
+		type: AlertType;
+	};
+	const [errorMessage, setErrorMessage] = useState<ErrorMessage>({
+		visible: false,
+		title: '',
+		subtitle: '',
+		type: 'failed',
+	});
+
+	const onOkDelete = async () => {
+		setDeleteConfirmation(false);
+
+		if (voiceId) {
+			dispatch(setLoading());
+			try {
+				const {data} = await Service.deleteVoice({id: voiceId});
+				setTimeout(() => {
+					dispatch(setLoading());
+					setErrorMessage({
+						visible: true,
+						title: 'Success',
+						type: 'success',
+						subtitle: data.message,
+					});
+				}, 500);
+			} catch (err: any) {
+				setTimeout(() => {
+					dispatch(setLoading());
+					console.log(err);
+					setErrorMessage({
+						visible: true,
+						title: 'Failed',
+						type: 'failed',
+						subtitle:
+							err &&
+							err.response &&
+							err.response.data &&
+							err.response.data.message
+								? err.response.data.message
+								: err && err.message
+								? err.message
+								: 'Server Error',
+					});
+				}, 500);
+			}
+		}
+	};
+	const onCancelDelete = () => {
+		setDeleteConfirmation(false);
+	};
+
+	const handleCloseSweetAlert = () => {
+		if (accessToken) {
+			const decode: any = jwtDecode(accessToken);
+			const queries: ITextsVoicesGetTextsVoicesQuery = {
+				page: 1,
+				id: decode.id,
+				groupByDate: groupByDay,
+				orderBy,
+			};
+			dispatch(setVoicesAction(queries));
+		}
+		setErrorMessage({
+			visible: false,
+			title: '',
+			subtitle: '',
+			type: 'failed',
+		});
+	};
+
+	const onSelectCard = (id: number) => {
+		setDeleteConfirmation(true);
+		setVoiceId(id);
+	};
 
 	const handleGetDetail = async (id: number) => {
 		if (accessToken && refreshToken && setTokens) {
@@ -146,6 +228,21 @@ const Voices: React.FC<IHomeProps> = props => {
 				voiceLink={detail.voiceLink}
 				onClose={handleVisible}
 			/>
+			<SweetAlert
+				visible={deleteConfirmation}
+				type="confirmation"
+				title="Remove Voice"
+				subtitle="Are you sure to remove this one?"
+				onOk={onOkDelete}
+				onCancel={onCancelDelete}
+			/>
+			<SweetAlert
+				visible={errorMessage.visible}
+				type={errorMessage.type}
+				title={errorMessage.title}
+				subtitle={errorMessage.subtitle}
+				onOk={handleCloseSweetAlert}
+			/>
 			{fetching ? (
 				<View style={styled.flexContainer}>
 					<ActivityIndicator size="large" color={Colors.primary} />
@@ -165,6 +262,7 @@ const Voices: React.FC<IHomeProps> = props => {
 										time={item.time}
 										type="voice"
 										onPress={() => handleGetDetail(item.id)}
+										onDelete={() => onSelectCard(item.id)}
 									/>
 								</Container>
 							)}
@@ -196,6 +294,7 @@ const Voices: React.FC<IHomeProps> = props => {
 											time={item.time}
 											type="voice"
 											onPress={() => handleGetDetail(item.id)}
+											onDelete={() => onSelectCard(item.id)}
 										/>
 									</Container>
 								)}

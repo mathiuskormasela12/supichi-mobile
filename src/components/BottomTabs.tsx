@@ -28,7 +28,7 @@ import Service from '../services';
 import {LANGUAGES} from '../constants/LANGUAGES';
 
 // import all components
-import {DetailModal} from './';
+import {DetailModal, SweetAlert} from './';
 
 // import all icons
 import HomeIcon from '../assets/images/home-icon.svg';
@@ -70,6 +70,17 @@ export const BottomTabs: any = (props: any) => {
 		setVisible((currentVisible: boolean) => !currentVisible);
 		setRenderFrom(renderFromParam);
 	};
+
+	type ErrorMessage = {
+		visible: boolean;
+		title: string;
+		subtitle: string;
+	};
+	const [errorMessage, setErrorMessage] = useState<ErrorMessage>({
+		visible: false,
+		title: '',
+		subtitle: '',
+	});
 
 	const navigateTo = (screen: string) => navigation.navigate(screen);
 
@@ -169,7 +180,20 @@ export const BottomTabs: any = (props: any) => {
 				dispatch({
 					type: 'SET_LOADING',
 				});
-				console.log(JSON.stringify(err));
+				setErrorMessage({
+					visible: true,
+					title: 'Failed',
+					subtitle:
+						err &&
+						err.response &&
+						err.response.data &&
+						err.response.data.message
+							? err.response.data.message
+							: err && err.message
+							? err.message
+							: 'Server Error',
+				});
+				console.log(err);
 			}
 		}
 	};
@@ -196,7 +220,20 @@ export const BottomTabs: any = (props: any) => {
 				dispatch({
 					type: 'SET_LOADING',
 				});
-				console.log(JSON.stringify(err));
+				setErrorMessage({
+					visible: true,
+					title: 'Failed',
+					subtitle:
+						err &&
+						err.response &&
+						err.response.data &&
+						err.response.data.message
+							? err.response.data.message
+							: err && err.message
+							? err.message
+							: 'Server Error',
+				});
+				console.log(err);
 			}
 		}
 	};
@@ -204,6 +241,14 @@ export const BottomTabs: any = (props: any) => {
 	const handleCancelCrop = () => {
 		setUri('');
 		setLanguageKey('');
+	};
+
+	const handleCloseSweetAlert = () => {
+		setErrorMessage({
+			visible: false,
+			title: '',
+			subtitle: '',
+		});
 	};
 
 	const handleSaveCroppedImage = () => cropViewRef.current.saveImage(true, 90);
@@ -265,6 +310,13 @@ export const BottomTabs: any = (props: any) => {
 					text="Lorem ipsum dolor sit amet,
 					consectetur adipiscing. "
 					onClose={handleDetailModalVisible}
+				/>
+				<SweetAlert
+					visible={errorMessage.visible}
+					type="failed"
+					title={errorMessage.title}
+					subtitle={errorMessage.subtitle}
+					onOk={handleCloseSweetAlert}
 				/>
 				<Modal animationType="fade" transparent visible={visible}>
 					<TouchableWithoutFeedback onPress={() => showLanguageModal('Camera')}>
