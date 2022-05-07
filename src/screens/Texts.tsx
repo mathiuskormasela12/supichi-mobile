@@ -80,12 +80,7 @@ const Texts: React.FC<IHomeProps> = props => {
 			dispatch(setLoading());
 
 			try {
-				const {data: results} = await Service.getText(
-					accessToken,
-					refreshToken,
-					setTokens,
-					data,
-				);
+				const {data: results} = await Service.getText(data);
 				if (
 					results &&
 					results.results &&
@@ -126,7 +121,7 @@ const Texts: React.FC<IHomeProps> = props => {
 				groupByDate: groupByDay,
 				orderBy,
 			};
-			dispatch(setTextsAction(accessToken, refreshToken, setTokens, queries));
+			dispatch(setTextsAction(queries));
 		}
 	}, [
 		accessToken,

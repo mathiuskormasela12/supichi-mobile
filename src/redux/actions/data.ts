@@ -1,34 +1,17 @@
 // =========== Data Action
 // import all modules
 import {ITextsVoicesGetTextsVoicesQuery} from '../../interfaces';
-import {
-	ReduxSetTextsVoicesAction,
-	ReduxSetFetchingAction,
-	SetTokensAction,
-} from '../../types';
+import {ReduxSetTextsVoicesAction, ReduxSetFetchingAction} from '../../types';
 import Services from '../../services';
 
 export const setTextsVoicesAction: ReduxSetTextsVoicesAction = (
-	accessToken: string,
-	refreshToken: string,
-	setToken: SetTokensAction,
 	queries: ITextsVoicesGetTextsVoicesQuery,
 ) => {
 	return async (dispatch: any) => {
 		try {
-			const {data: texts} = await Services.getAllTexts(
-				accessToken,
-				refreshToken,
-				setToken,
-				queries,
-			);
+			const {data: texts} = await Services.getAllTexts(queries);
 			try {
-				const {data: voices} = await Services.getAllVoices(
-					accessToken,
-					refreshToken,
-					setToken,
-					queries,
-				);
+				const {data: voices} = await Services.getAllVoices(queries);
 				dispatch({
 					type: 'SET_TEXTS_VOICES',
 					payload: {
@@ -64,9 +47,6 @@ export const setTextsVoicesAction: ReduxSetTextsVoicesAction = (
 };
 
 export const setVoicesAction: ReduxSetTextsVoicesAction = (
-	accessToken: string,
-	refreshToken: string,
-	setToken: SetTokensAction,
 	queries: ITextsVoicesGetTextsVoicesQuery,
 ) => {
 	return async (dispatch: any) => {
@@ -74,13 +54,7 @@ export const setVoicesAction: ReduxSetTextsVoicesAction = (
 			type: 'FETCHING_VOICES',
 		});
 		try {
-			const {data: voices} = await Services.getAllVoices(
-				accessToken,
-				refreshToken,
-				setToken,
-				queries,
-				dispatch,
-			);
+			const {data: voices} = await Services.getAllVoices(queries);
 			dispatch({
 				type: 'SET_VOICES',
 				payload: {
@@ -114,9 +88,6 @@ export const setVoicesAction: ReduxSetTextsVoicesAction = (
 };
 
 export const setTextsAction: ReduxSetTextsVoicesAction = (
-	accessToken: string,
-	refreshToken: string,
-	setToken: SetTokensAction,
 	queries: ITextsVoicesGetTextsVoicesQuery,
 ) => {
 	return async (dispatch: any) => {
@@ -124,13 +95,7 @@ export const setTextsAction: ReduxSetTextsVoicesAction = (
 			type: 'FETCHING_TEXTS',
 		});
 		try {
-			const {data: texts} = await Services.getAllTexts(
-				accessToken,
-				refreshToken,
-				setToken,
-				queries,
-				dispatch,
-			);
+			const {data: texts} = await Services.getAllTexts(queries);
 			dispatch({
 				type: 'SET_TEXTS',
 				payload: {

@@ -16,4 +16,4 @@ const persistedStore = () => {
 	return {store, persistor};
 };
 
-export default persistedStore;
+export default persistedStore();

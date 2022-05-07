@@ -99,14 +99,7 @@ const SignIn: React.FC = () => {
 			dispatch(
 				setTokens(results.results.accessToken, results.results.refreshToken),
 			);
-			dispatch(
-				setTextsVoicesAction(
-					results.results.accessToken,
-					results.results.refreshToken,
-					setTokens,
-					queries,
-				),
-			);
+			dispatch(setTextsVoicesAction(queries));
 			setTimeout(() => {
 				dispatch(setLoading());
 				handleNavigate('Main', {isFromLoginScreen: true});

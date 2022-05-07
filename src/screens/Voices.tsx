@@ -84,12 +84,7 @@ const Voices: React.FC<IHomeProps> = props => {
 			dispatch(setLoading());
 
 			try {
-				const {data: results} = await Service.getVoice(
-					accessToken,
-					refreshToken,
-					setTokens,
-					data,
-				);
+				const {data: results} = await Service.getVoice(data);
 				if (
 					results &&
 					results.results &&
@@ -133,7 +128,7 @@ const Voices: React.FC<IHomeProps> = props => {
 				groupByDate: groupByDay,
 				orderBy,
 			};
-			dispatch(setVoicesAction(accessToken, refreshToken, setTokens, queries));
+			dispatch(setVoicesAction(queries));
 		}
 	}, [
 		accessToken,

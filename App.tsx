@@ -7,7 +7,7 @@ import persistedStore from './src/redux/store';
 import Wrapper from './src/Wrapper';
 
 const App: React.FC = () => {
-	const {store, persistor} = persistedStore();
+	const {store, persistor} = persistedStore;
 	return (
 		<Provider store={store}>
 			<PersistGate persistor={persistor}>

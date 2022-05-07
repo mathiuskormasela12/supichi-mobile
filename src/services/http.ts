@@ -2,19 +2,21 @@
 // import all modules
 import axios from 'axios';
 import {API_URL} from '@env';
-import {HttpFunc, SetTokensAction} from '../types';
+import {setTokens} from '../redux/actions/auth';
+import persistedStore from '../redux/store';
 
-const http: HttpFunc = (
-	accessToken?: string,
-	refreshToken?: string,
-	setTokens?: SetTokensAction,
-	dispatch?: any,
-) => {
+const {store} = persistedStore;
+
+const http = () => {
+	const {dispatch, getState} = store;
 	const instances = axios.create({
 		baseURL: API_URL,
 	});
 
-	if (accessToken && refreshToken && setTokens) {
+	const accessToken = getState().auth.accessToken;
+	const refreshToken = getState().auth.refreshToken;
+
+	if (accessToken && refreshToken) {
 		instances.interceptors.request.use(
 			(config: any) => {
 				if (accessToken) {
@@ -32,8 +34,8 @@ const http: HttpFunc = (
 				return res;
 			},
 			async (err: any) => {
-				console.log('LIAT INI BRE =>', err.request.status);
 				const originalConfig = err.config;
+
 				if (err.response) {
 					// Access Token was expired
 					if (err.response.status === 403 && !originalConfig._retry) {
@@ -45,6 +47,7 @@ const http: HttpFunc = (
 							dispatch(
 								setTokens(data.results.accessToken, data.results.refreshToken),
 							);
+
 							return instances(originalConfig);
 						} catch (_error: any) {
 							console.log(_error);

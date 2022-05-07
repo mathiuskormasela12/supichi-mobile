@@ -9,7 +9,6 @@ import {
 	ITextsVoicesGetTextsVoicesQuery,
 	IGetTextVoiceDetail,
 } from '../interfaces';
-import {SetTokensAction} from '../types';
 
 class Service {
 	public static login(data: ILoginBody) {
@@ -28,62 +27,26 @@ class Service {
 		return http().put('/auth/password', data);
 	}
 
-	public static getAllTexts(
-		accessToken: string,
-		refreshToken: string,
-		setToken: SetTokensAction,
-		data: ITextsVoicesGetTextsVoicesQuery,
-		dispatch?: any,
-	) {
+	public static getAllTexts(data: ITextsVoicesGetTextsVoicesQuery) {
 		const queries: string = `${Object.keys(data)
 			.map((item, index) => `${item}=${Object.values(data)[index]}`)
 			.join('&')}`;
-		return http(accessToken, refreshToken, setToken, dispatch).get(
-			`/texts?${queries}`,
-			data,
-		);
+		return http().get(`/texts?${queries}`);
 	}
 
-	public static getAllVoices(
-		accessToken: string,
-		refreshToken: string,
-		setToken: SetTokensAction,
-		data: ITextsVoicesGetTextsVoicesQuery,
-		dispatch?: any,
-	) {
+	public static getAllVoices(data: ITextsVoicesGetTextsVoicesQuery) {
 		const queries: string = `${Object.keys(data)
 			.map((item, index) => `${item}=${Object.values(data)[index]}`)
 			.join('&')}`;
-		return http(accessToken, refreshToken, setToken, dispatch).get(
-			`/voices?${queries}`,
-			data,
-		);
+		return http().get(`/voices?${queries}`);
 	}
 
-	public static getText(
-		accessToken: string,
-		refreshToken: string,
-		setToken: SetTokensAction,
-		data: IGetTextVoiceDetail,
-		dispatch?: any,
-	) {
-		return http(accessToken, refreshToken, setToken, dispatch).get(
-			`/text/${data.id}`,
-			data,
-		);
+	public static getText(data: IGetTextVoiceDetail) {
+		return http().get(`/text/${data.id}`);
 	}
 
-	public static getVoice(
-		accessToken: string,
-		refreshToken: string,
-		setToken: SetTokensAction,
-		data: IGetTextVoiceDetail,
-		dispatch?: any,
-	) {
-		return http(accessToken, refreshToken, setToken, dispatch).get(
-			`/voice/${data.id}`,
-			data,
-		);
+	public static getVoice(data: IGetTextVoiceDetail) {
+		return http().get(`/voice/${data.id}`);
 	}
 }
 

@@ -27,6 +27,7 @@ import UserIconDisabled from '../assets/images/user-icon-disabled.svg';
 import UserIcon from '../assets/images/user-icon.svg';
 import LogoutIcon from '../assets/images/logout-icon.svg';
 import CameraIcon from '../assets/images/camera-icon.svg';
+import {LANGUAGES} from '../constants/LANGUAGES';
 
 export const BottomTabs: any = (props: any) => {
 	const {
@@ -76,26 +77,14 @@ export const BottomTabs: any = (props: any) => {
 						<SafeAreaView style={styled.modal}>
 							<View style={styled.languagesBox}>
 								<View style={styled.list}>
-									<TouchableOpacity
-										style={styled.items}
-										onPress={handleDetailModalVisible}>
-										<Text style={styled.listText}>English</Text>
-									</TouchableOpacity>
-									<TouchableOpacity
-										style={[styled.items]}
-										onPress={handleDetailModalVisible}>
-										<Text style={styled.listText}>Indonesia</Text>
-									</TouchableOpacity>
-									<TouchableOpacity
-										style={styled.items}
-										onPress={handleDetailModalVisible}>
-										<Text style={styled.listText}>Japanese</Text>
-									</TouchableOpacity>
-									<TouchableOpacity
-										style={[styled.items, styled.borderless]}
-										onPress={handleDetailModalVisible}>
-										<Text style={styled.listText}>Korean</Text>
-									</TouchableOpacity>
+									{LANGUAGES.map(item => (
+										<TouchableOpacity
+											key={item.id.toString()}
+											style={styled.items}
+											onPress={handleDetailModalVisible}>
+											<Text style={styled.listText}>{item.name}</Text>
+										</TouchableOpacity>
+									))}
 								</View>
 							</View>
 						</SafeAreaView>
