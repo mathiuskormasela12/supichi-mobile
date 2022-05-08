@@ -9,6 +9,9 @@ import {
 	ITextsVoicesGetTextsVoicesQuery,
 	IGetTextVoiceDetail,
 	IGenerateTextAndVoice,
+	IGetUser,
+	IUpdateUser,
+	IUploadUserPhoto,
 } from '../interfaces';
 import {generateFormData} from '../helpers';
 
@@ -67,6 +70,19 @@ class Service {
 
 	public static deleteVoice(data: IGetTextVoiceDetail) {
 		return http().delete(`/voice/${data.id}`);
+	}
+
+	public static getUser(data: IGetUser) {
+		return http().get(`/user/${data.id}`);
+	}
+
+	public static updateUser(id: number, data: IUpdateUser) {
+		return http().put(`/user/${id}`, data);
+	}
+
+	public static uploadUserPhoto(id: number, data: IUploadUserPhoto) {
+		const formData = generateFormData(data);
+		return http().put(`/user/photo/${id}`, formData);
 	}
 }
 

@@ -1,6 +1,6 @@
 // =========== Profile
 // import all modules
-import React, {Fragment, useState, useEffect} from 'react';
+import React, {Fragment, useState, useEffect, useCallback} from 'react';
 import {
 	SafeAreaView,
 	View,
@@ -10,23 +10,54 @@ import {
 	Platform,
 	StyleSheet,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import jwtDecode from 'jwt-decode';
 import {percentageDimensions} from '../helpers';
+import {IGetUser, IUpdateUser} from '../interfaces';
 import {Colors, Fonts} from '../themes';
+import {AlertType} from '../types';
+import {setLoading} from '../redux/actions/loading';
 
 // import all components
-import {Container, TextField, Button} from '../components';
+import {Container, TextField, Button, SweetAlert} from '../components';
 
 // import all assets
 import noPhoto from '../assets/images/nophoto.png';
+import Service from '../services';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const Profile: React.FC = () => {
-	const [state, setState] = useState({
-		fullName: 'Mathius',
-		username: 'mathius.kormasela.dev@gmail.com',
-		message: '',
+	const dispatch = useDispatch();
+	type StateType = {
+		fullName: string;
+		username: string;
+		photo: string;
+		formFullName: string;
+		formUsername: string;
+		textsCount: number;
+		voicesCount: number;
+		messageTitle: string;
+		messageSubtitle: string;
+		visible: boolean;
+		type: AlertType;
+		disabled: boolean;
+		refresh: boolean;
+	};
+	const [state, setState] = useState<StateType>({
+		fullName: '',
+		username: '',
+		photo: '',
+		formFullName: '',
+		formUsername: '',
+		textsCount: 0,
+		voicesCount: 0,
+		messageTitle: '',
+		messageSubtitle: '',
+		visible: false,
+		type: 'success',
 		disabled: true,
+		refresh: false,
 	});
 
 	const fullNameMessage: string = useSelector(
@@ -35,6 +66,95 @@ const Profile: React.FC = () => {
 	const usernameMessage: string = useSelector(
 		(currentState: any) => currentState.invalidMessage.username,
 	);
+	const accessToken: string | null = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.auth.accessToken,
+	);
+
+	const handleTextField = (name: string, value: string) => {
+		setState(currentState => ({
+			...currentState,
+			[name]: value,
+		}));
+	};
+
+	const handleGetUser = useCallback(async () => {
+		if (accessToken) {
+			dispatch(setLoading());
+			const decode: any = jwtDecode(accessToken);
+			const params: IGetUser = {
+				id: decode.id,
+			};
+			try {
+				const {
+					data: {results},
+				} = await Service.getUser(params);
+				setState((currentState: StateType) => ({
+					...currentState,
+					fullName: results.fullName,
+					username: results.username,
+					photo: results.photo,
+					formFullName: results.fullName,
+					formUsername: results.username,
+					textsCount: results.textsCount,
+					voicesCount: results.voicesCount,
+				}));
+				dispatch(setLoading());
+			} catch (err: any) {
+				dispatch(setLoading());
+				setState((currentState: StateType) => ({
+					...currentState,
+					visible: true,
+					title: 'Failed',
+					subtitle: err.message,
+					type: 'failed',
+				}));
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const handleCloseSweetAlert = () => {
+		handleGetUser();
+		setState((currentState: StateType) => ({
+			...currentState,
+			visible: false,
+			title: '',
+			subtitle: '',
+			type: 'failed',
+		}));
+	};
+
+	const handleUpdateUser = async () => {
+		if (accessToken) {
+			dispatch(setLoading());
+			const decode: any = jwtDecode(accessToken);
+			const data: IUpdateUser = {
+				fullName: state.formFullName,
+				username: state.formUsername,
+			};
+			try {
+				const {data: response} = await Service.updateUser(decode.id, data);
+				dispatch(setLoading());
+				setState((currentState: StateType) => ({
+					...currentState,
+					refresh: !currentState.refresh,
+					visible: true,
+					messageTitle: 'Success',
+					type: 'success',
+					messageSubtitle: response.message,
+				}));
+			} catch (err: any) {
+				dispatch(setLoading());
+				setState((currentState: StateType) => ({
+					...currentState,
+					visible: true,
+					title: 'Failed',
+					subtitle: err.message,
+					type: 'failed',
+				}));
+			}
+		}
+	};
 
 	useEffect(() => {
 		if (
@@ -61,12 +181,9 @@ const Profile: React.FC = () => {
 		usernameMessage,
 	]);
 
-	const handleTextField = (name: string, value: string) => {
-		setState(currentState => ({
-			...currentState,
-			[name]: value,
-		}));
-	};
+	useEffect(() => {
+		handleGetUser();
+	}, [handleGetUser]);
 
 	return (
 		<Fragment>
@@ -74,6 +191,13 @@ const Profile: React.FC = () => {
 			<KeyboardAwareScrollView style={styled.keyboardAwareScrollView}>
 				<SafeAreaView style={styled.hero}>
 					<StatusBar backgroundColor={Colors.white} barStyle="dark-content" />
+					<SweetAlert
+						visible={state.visible}
+						type={state.type}
+						title={state.messageTitle}
+						subtitle={state.messageSubtitle}
+						onOk={handleCloseSweetAlert}
+					/>
 					<Container>
 						<View style={styled.header}>
 							<Text style={styled.text}>Profile</Text>
@@ -82,22 +206,27 @@ const Profile: React.FC = () => {
 							<View style={styled.box}>
 								<View style={styled.row}>
 									<View style={styled.firstCol}>
-										<Image source={noPhoto} style={styled.img} />
+										<TouchableOpacity>
+											<Image
+												source={
+													state.photo === '' ? noPhoto : {uri: state.photo}
+												}
+												style={styled.img}
+											/>
+										</TouchableOpacity>
 									</View>
 									<View style={styled.lastCol}>
-										<Text style={styled.cardTitle}>Stephen Chow</Text>
-										<Text style={styled.cardSubtitle}>
-											pangcheo1210@gmail.com
-										</Text>
+										<Text style={styled.cardTitle}>{state.fullName}</Text>
+										<Text style={styled.cardSubtitle}>{state.username}</Text>
 									</View>
 								</View>
 								<View style={styled.textRow}>
 									<View style={styled.textCol}>
-										<Text style={styled.textValue}>120</Text>
+										<Text style={styled.textValue}>{state.voicesCount}</Text>
 										<Text style={styled.textPlaceholder}>Voices</Text>
 									</View>
 									<View style={styled.textCol}>
-										<Text style={styled.textValue}>80</Text>
+										<Text style={styled.textValue}>{state.textsCount}</Text>
 										<Text style={styled.textPlaceholder}>Texts</Text>
 									</View>
 								</View>
@@ -108,29 +237,32 @@ const Profile: React.FC = () => {
 									<View style={styled.control}>
 										<TextField
 											type="default"
-											value={state.fullName}
+											value={state.formFullName}
 											label="Full Name"
 											name="fullName"
 											placeholder="Enter your full name"
 											onChangeText={(value: string) =>
-												handleTextField('fullName', value)
+												handleTextField('formFullName', value)
 											}
 										/>
 									</View>
 									<View style={styled.control}>
 										<TextField
 											type="email-address"
-											value={state.username}
+											value={state.formUsername}
 											name="username"
 											label="Username"
 											placeholder="Enter your username"
 											onChangeText={(value: string) =>
-												handleTextField('username', value)
+												handleTextField('formUsername', value)
 											}
 										/>
 									</View>
 									<View style={styled.btnControl}>
-										<Button disabled={state.disabled} variant="primary">
+										<Button
+											disabled={state.disabled}
+											variant="primary"
+											onPress={handleUpdateUser}>
 											Update Profile
 										</Button>
 									</View>
@@ -212,12 +344,13 @@ const styled = StyleSheet.create({
 	row: {
 		flexDirection: 'row',
 		alignItems: 'center',
+		justifyContent: 'space-between',
 	},
 	firstCol: {
-		flex: 1,
+		width: '20%',
 	},
 	lastCol: {
-		flex: 3.5,
+		width: '75%',
 	},
 	img: {
 		resizeMode: 'contain',

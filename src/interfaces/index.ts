@@ -28,3 +28,6 @@ export * from './IHomeProps';
 export * from './IGetTextVoiceDetail';
 export * from './IGenerateTextAndVoice';
 export * from './ISweetAlertProps';
+export * from './IGetUser';
+export * from './IUpdateUser';
+export * from './IUploadUserPhoto';
