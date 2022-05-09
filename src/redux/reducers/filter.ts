@@ -4,7 +4,7 @@ import {IFilterGlobalStates, IReduxFilterAction} from '../../interfaces';
 
 const initialStates: IFilterGlobalStates = {
 	groupByDay: 1,
-	orderBy: 'ASC',
+	orderBy: 'DESC',
 };
 
 const filterReducer = (

@@ -137,7 +137,7 @@ const Home: React.FC<IHomeProps> = () => {
 											</TouchableOpacity>
 											<TouchableOpacity
 												style={[styled.items]}
-												onPress={() => handleFilter(setOrderBy, 'ASC')}>
+												onPress={() => handleFilter(setOrderBy, 'DESC')}>
 												<Text style={styled.listText}>
 													Latest {routes[index].title}s
 												</Text>
@@ -145,14 +145,14 @@ const Home: React.FC<IHomeProps> = () => {
 													style={[
 														styled.checkListIcon,
 														filter.groupByDay === 0 &&
-															filter.orderBy === 'ASC' &&
+															filter.orderBy === 'DESC' &&
 															styled.active,
 													]}
 												/>
 											</TouchableOpacity>
 											<TouchableOpacity
 												style={styled.items}
-												onPress={() => handleFilter(setOrderBy, 'DESC')}>
+												onPress={() => handleFilter(setOrderBy, 'ASC')}>
 												<Text style={styled.listText}>
 													Older {routes[index].title}s
 												</Text>
@@ -160,7 +160,7 @@ const Home: React.FC<IHomeProps> = () => {
 													style={[
 														styled.checkListIcon,
 														filter.groupByDay === 0 &&
-															filter.orderBy === 'DESC' &&
+															filter.orderBy === 'ASC' &&
 															styled.active,
 													]}
 												/>
