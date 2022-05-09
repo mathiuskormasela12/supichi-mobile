@@ -12,9 +12,10 @@ import {
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {launchImageLibrary} from 'react-native-image-picker';
 import jwtDecode from 'jwt-decode';
 import {percentageDimensions} from '../helpers';
-import {IGetUser, IUpdateUser} from '../interfaces';
+import {IGetUser, IUpdateUser, IUploadUserPhoto} from '../interfaces';
 import {Colors, Fonts} from '../themes';
 import {AlertType} from '../types';
 import {setLoading} from '../redux/actions/loading';
@@ -156,6 +157,71 @@ const Profile: React.FC = () => {
 		}
 	};
 
+	const handleImageLibrary = async () => {
+		try {
+			const response = await launchImageLibrary({
+				mediaType: 'photo',
+				includeBase64: false,
+				quality: 0.5,
+			});
+
+			if (
+				response.assets &&
+				response.assets.length > 0 &&
+				response.assets[0].uri &&
+				response.assets[0].type &&
+				response.assets[0].fileName
+			) {
+				const data: IUploadUserPhoto = {
+					photo: {
+						uri: response.assets[0].uri,
+						type: response.assets[0].type,
+						name: response.assets[0].fileName,
+					},
+				};
+
+				handleUploadPhoto(data);
+			}
+		} catch (err: any) {
+			console.log(err.message);
+		}
+	};
+
+	const handleUploadPhoto = async (data: IUploadUserPhoto) => {
+		if (accessToken) {
+			const decode: any = jwtDecode(accessToken);
+
+			try {
+				const {data: results} = await Service.uploadUserPhoto(decode.id, data);
+				setState((currentState: StateType) => ({
+					...currentState,
+					refresh: !currentState.refresh,
+					visible: true,
+					messageTitle: 'Success',
+					type: 'success',
+					messageSubtitle: results.message,
+				}));
+			} catch (err: any) {
+				dispatch(setLoading());
+				setState((currentState: StateType) => ({
+					...currentState,
+					visible: true,
+					title: 'Failed',
+					subtitle:
+						err &&
+						err.response &&
+						err.response.data &&
+						err.response.data.message
+							? err.response.data.message
+							: err && err.message
+							? err.message
+							: 'Server Error',
+					type: 'failed',
+				}));
+			}
+		}
+	};
+
 	useEffect(() => {
 		if (
 			state.fullName.length > 0 &&
@@ -206,7 +272,7 @@ const Profile: React.FC = () => {
 							<View style={styled.box}>
 								<View style={styled.row}>
 									<View style={styled.firstCol}>
-										<TouchableOpacity>
+										<TouchableOpacity onPress={handleImageLibrary}>
 											<Image
 												source={
 													state.photo === '' ? noPhoto : {uri: state.photo}
@@ -313,8 +379,8 @@ const styled = StyleSheet.create({
 		marginTop: percentageDimensions(0.2, 'height'),
 	},
 	box: {
-		paddingTop: percentageDimensions(1, 'height'),
-		paddingBottom: percentageDimensions(4.5, 'height'),
+		paddingTop: percentageDimensions(4, 'height'),
+		paddingBottom: percentageDimensions(4, 'height'),
 		paddingHorizontal: percentageDimensions(7),
 		justifyContent: 'center',
 		backgroundColor: Colors.white,
@@ -347,15 +413,16 @@ const styled = StyleSheet.create({
 		justifyContent: 'space-between',
 	},
 	firstCol: {
-		width: '20%',
+		width: '25%',
 	},
 	lastCol: {
-		width: '75%',
+		width: '73%',
 	},
 	img: {
 		resizeMode: 'contain',
-		width: percentageDimensions(15),
-		height: percentageDimensions(15, 'height'),
+		width: 60,
+		height: 60,
+		borderRadius: 60,
 	},
 	cardTitle: {
 		color: Colors.dark,
@@ -370,6 +437,7 @@ const styled = StyleSheet.create({
 	},
 	textRow: {
 		flexDirection: 'row',
+		marginTop: percentageDimensions(2, 'height'),
 	},
 	textCol: {
 		marginRight: percentageDimensions(3),
