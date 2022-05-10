@@ -47,7 +47,9 @@ export const Card = (props: ICardProps) => {
 					{type === 'text' ? <TextIcon /> : <VoiceIcon />}
 				</View>
 				<View style={styled.lastCol}>
-					<Text style={styled.text}>{text}</Text>
+					<Text style={styled.text} numberOfLines={1} ellipsizeMode="tail">
+						{text}
+					</Text>
 					<Text style={styled.time}>{time}</Text>
 					<View style={styled.border} />
 				</View>

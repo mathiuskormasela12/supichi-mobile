@@ -168,6 +168,7 @@ export const BottomTabs: any = (props: any) => {
 				const decode: any = jwtDecode(accessToken);
 				const queries: ITextsVoicesGetTextsVoicesQuery = {
 					page: 1,
+					limit: 6,
 					id: decode.id,
 					groupByDate: groupByDay,
 					orderBy,
@@ -209,6 +210,7 @@ export const BottomTabs: any = (props: any) => {
 				const queries: ITextsVoicesGetTextsVoicesQuery = {
 					page: 1,
 					id: decode.id,
+					limit: 6,
 					groupByDate: groupByDay,
 					orderBy,
 				};
@@ -351,14 +353,29 @@ export const BottomTabs: any = (props: any) => {
 					</View>
 					<View style={styled.tabLists}>
 						<TouchableOpacity
-							onPress={() => showLanguageModal('Image Gallery')}>
+							onPress={() => {
+								if (index !== 0) {
+									navigateTo('Home');
+									showLanguageModal('Image Gallery');
+								} else {
+									showLanguageModal('Image Gallery');
+								}
+							}}>
 							<ImageIcon style={styled.imageIcon} />
 							<Text style={styled.text}>Image</Text>
 						</TouchableOpacity>
 					</View>
 					<View style={styled.tabLists}>
 						<View style={styled.cameraCircleContainer}>
-							<TouchableOpacity onPress={() => showLanguageModal('Camera')}>
+							<TouchableOpacity
+								onPress={() => {
+									if (index !== 0) {
+										navigateTo('Home');
+										showLanguageModal('Camera');
+									} else {
+										showLanguageModal('Camera');
+									}
+								}}>
 								<CameraIcon width={percentageDimensions(8)} />
 							</TouchableOpacity>
 						</View>
@@ -479,17 +496,16 @@ const styled = StyleSheet.create({
 		zIndex: 1,
 	},
 	cropView: {
-		height: percentageDimensions(80, 'height'),
+		height: percentageDimensions(77, 'height'),
 		backgroundColor: Colors.dark,
 		zIndex: 1,
 	},
 	cropViewButton: {
-		height: percentageDimensions(20, 'height'),
+		height: percentageDimensions(30, 'height'),
 		backgroundColor: Colors.dark,
-		justifyContent: 'center',
 		zIndex: 1,
 	},
 	cropButtonMargin: {
-		marginBottom: percentageDimensions(2, 'height'),
+		marginBottom: percentageDimensions(2.3, 'height'),
 	},
 });
