@@ -8,4 +8,8 @@ export interface IDataGlobalStates {
 	fetchingTexts: boolean;
 	fetchingVoices: boolean;
 	fetchingFromSignInScreen: boolean;
+	textPage: number;
+	textTotalPages: number;
+	voicePage: number;
+	voiceTotalPages: number;
 }

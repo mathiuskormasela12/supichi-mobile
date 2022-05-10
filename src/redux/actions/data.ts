@@ -18,6 +18,10 @@ export const setTextsVoicesAction: ReduxSetTextsVoicesAction = (
 						data: {
 							texts: texts.results,
 							voices: voices.results,
+							textPage: texts.pageInfo.currentPage,
+							textTotalPages: texts.pageInfo.totalPages,
+							voicePage: voices.pageInfo.currentPage,
+							voiceTotalPages: voices.pageInfo.totalPages,
 						},
 					},
 				});
@@ -28,6 +32,10 @@ export const setTextsVoicesAction: ReduxSetTextsVoicesAction = (
 						data: {
 							texts: [],
 							voices: [],
+							textPage: 1,
+							textTotalPages: 1,
+							voicePage: 1,
+							voiceTotalPages: 1,
 						},
 					},
 				});
@@ -39,6 +47,10 @@ export const setTextsVoicesAction: ReduxSetTextsVoicesAction = (
 					data: {
 						texts: [],
 						voices: [],
+						textPage: 1,
+						textTotalPages: 1,
+						voicePage: 1,
+						voiceTotalPages: 1,
 					},
 				},
 			});
@@ -64,6 +76,8 @@ export const setVoicesAction: ReduxSetTextsVoicesAction = (
 				payload: {
 					data: {
 						voices: voices.results,
+						voicePage: voices.pageInfo.currentPage,
+						voiceTotalPages: voices.pageInfo.totalPages,
 					},
 				},
 			});
@@ -81,6 +95,8 @@ export const setVoicesAction: ReduxSetTextsVoicesAction = (
 				payload: {
 					data: {
 						voices: [],
+						voicePage: 1,
+						voiceTotalPages: 1,
 					},
 				},
 			});
@@ -91,6 +107,56 @@ export const setVoicesAction: ReduxSetTextsVoicesAction = (
 					});
 				}, 500);
 			}
+		}
+	};
+};
+
+export const addVoicesAction: ReduxSetTextsVoicesAction = (
+	queries: ITextsVoicesGetTextsVoicesQuery,
+) => {
+	return async (dispatch: any) => {
+		try {
+			const {data: voices} = await Services.getAllVoices(queries);
+			dispatch({
+				type: 'ADD_VOICES',
+				payload: {
+					data: {
+						voices: voices.results,
+						voicePage: voices.pageInfo.currentPage,
+						voiceTotalPages: voices.pageInfo.totalPages,
+					},
+				},
+			});
+		} catch (err: any) {
+			console.log(err);
+			dispatch({
+				type: 'ADD_VOICES',
+				payload: {
+					data: {
+						voices: [],
+						voicePage:
+							err &&
+							err.response &&
+							err.response.data &&
+							err.response.data.pageInfo &&
+							err.response.data.pageInfo.currentPage
+								? err.response.data.pageInfo.currentPage
+								: err && err.message
+								? 1
+								: 1,
+						voiceTotalPages:
+							err &&
+							err.response &&
+							err.response.data &&
+							err.response.data.pageInfo &&
+							err.response.data.pageInfo.totalPages
+								? err.response.data.pageInfo.totalPages
+								: err && err.message
+								? 1
+								: 1,
+					},
+				},
+			});
 		}
 	};
 };
@@ -112,6 +178,8 @@ export const setTextsAction: ReduxSetTextsVoicesAction = (
 				payload: {
 					data: {
 						texts: texts.results,
+						textPage: texts.pageInfo.currentPage,
+						textTotalPages: texts.pageInfo.totalPages,
 					},
 				},
 			});
@@ -129,6 +197,8 @@ export const setTextsAction: ReduxSetTextsVoicesAction = (
 				payload: {
 					data: {
 						texts: [],
+						textPage: 1,
+						textTotalPages: 1,
 					},
 				},
 			});
@@ -139,6 +209,56 @@ export const setTextsAction: ReduxSetTextsVoicesAction = (
 					});
 				}, 500);
 			}
+		}
+	};
+};
+
+export const addTextsAction: ReduxSetTextsVoicesAction = (
+	queries: ITextsVoicesGetTextsVoicesQuery,
+) => {
+	return async (dispatch: any) => {
+		try {
+			const {data: texts} = await Services.getAllTexts(queries);
+			dispatch({
+				type: 'ADD_TEXTS',
+				payload: {
+					data: {
+						texts: texts.results,
+						textPage: texts.pageInfo.currentPage,
+						textTotalPages: texts.pageInfo.totalPages,
+					},
+				},
+			});
+		} catch (err: any) {
+			console.log(err);
+			dispatch({
+				type: 'ADD_TEXTS',
+				payload: {
+					data: {
+						texts: [],
+						textPage:
+							err &&
+							err.response &&
+							err.response.data &&
+							err.response.data.pageInfo &&
+							err.response.data.pageInfo.currentPage
+								? err.response.data.pageInfo.currentPage
+								: err && err.message
+								? 1
+								: 1,
+						textTotalPages:
+							err &&
+							err.response &&
+							err.response.data &&
+							err.response.data.pageInfo &&
+							err.response.data.pageInfo.totalPages
+								? err.response.data.pageInfo.totalPages
+								: err && err.message
+								? 1
+								: 1,
+					},
+				},
+			});
 		}
 	};
 };

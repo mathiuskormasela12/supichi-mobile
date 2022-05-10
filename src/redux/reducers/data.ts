@@ -7,7 +7,11 @@ const initialStates: IDataGlobalStates = {
 	voices: [],
 	fetchingTexts: false,
 	fetchingVoices: false,
-	fetchingFromSignInScreen: true,
+	fetchingFromSignInScreen: false,
+	textPage: 1,
+	textTotalPages: 1,
+	voicePage: 1,
+	voiceTotalPages: 1,
 };
 
 const dataReducer = (
@@ -21,6 +25,17 @@ const dataReducer = (
 				texts: action.payload.data.texts,
 				voices: action.payload.data.voices,
 				fetchingFromSignInScreen: false,
+				textPage: action.payload.data.textPage,
+				textTotalPages: action.payload.data.textTotalPages,
+				voicePage: action.payload.data.voicePage,
+				voiceTotalPages: action.payload.data.voiceTotalPages,
+			};
+		}
+
+		case 'FETCHING_FROM_SIGNIN_SCREEN': {
+			return {
+				...states,
+				fetchingFromSignInScreen: true,
 			};
 		}
 
@@ -28,6 +43,17 @@ const dataReducer = (
 			return {
 				...states,
 				texts: action.payload.data.texts,
+				textPage: action.payload.data.textPage,
+				textTotalPages: action.payload.data.textTotalPages,
+			};
+		}
+
+		case 'ADD_TEXTS': {
+			return {
+				...states,
+				texts: [...states.texts, ...action.payload.data.texts],
+				textPage: action.payload.data.textPage,
+				textTotalPages: action.payload.data.textTotalPages,
 			};
 		}
 
@@ -35,6 +61,31 @@ const dataReducer = (
 			return {
 				...states,
 				voices: action.payload.data.voices,
+				voicePage: action.payload.data.voicePage,
+				voiceTotalPages: action.payload.data.voiceTotalPages,
+			};
+		}
+
+		case 'ADD_VOICES': {
+			return {
+				...states,
+				voices: [...states.voices, ...action.payload.data.voices],
+				voicePage: action.payload.data.voicePage,
+				voiceTotalPages: action.payload.data.voiceTotalPages,
+			};
+		}
+
+		case 'SET_TEXT_PAGE': {
+			return {
+				...states,
+				textPage: action.payload.data.textPage,
+			};
+		}
+
+		case 'SET_VOICE_PAGE': {
+			return {
+				...states,
+				voicePage: action.payload.data.voicePage,
 			};
 		}
 

@@ -34,6 +34,12 @@ const Texts: React.FC = () => {
 	const texts: any[] = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.data.texts,
 	);
+	const page: number = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.data.textPage,
+	);
+	const totalPages: number = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.data.textTotalPages,
+	);
 	const fetching: boolean = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.data.fetchingTexts,
 	);
@@ -133,6 +139,7 @@ const Texts: React.FC = () => {
 			const queries: ITextsVoicesGetTextsVoicesQuery = {
 				page: 1,
 				id: decode.id,
+				limit: 6,
 				groupByDate: groupByDay,
 				orderBy,
 			};
@@ -184,6 +191,19 @@ const Texts: React.FC = () => {
 					// setE
 				}, 500);
 			}
+		}
+	};
+
+	const handleNextPage = () => {
+		if (page < totalPages) {
+			dispatch({
+				type: 'SET_TEXT_PAGE',
+				payload: {
+					data: {
+						textPage: page + 1,
+					},
+				},
+			});
 		}
 	};
 
@@ -248,6 +268,7 @@ const Texts: React.FC = () => {
 									return null;
 								}
 							}}
+							onEndReached={handleNextPage}
 						/>
 					) : (
 						<Fragment>
@@ -269,6 +290,7 @@ const Texts: React.FC = () => {
 										/>
 									</Container>
 								)}
+								onEndReached={handleNextPage}
 							/>
 						</Fragment>
 					)}

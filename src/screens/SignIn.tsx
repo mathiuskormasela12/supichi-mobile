@@ -95,12 +95,16 @@ const SignIn: React.FC = () => {
 			const queries: ITextsVoicesGetTextsVoicesQuery = {
 				page: 1,
 				id: decode.id,
+				limit: 6,
 				groupByDate: 1,
 				orderBy: 'ASC',
 			};
 			dispatch(
 				setTokens(results.results.accessToken, results.results.refreshToken),
 			);
+			dispatch({
+				type: 'FETCHING_FROM_SIGNIN_SCREEN',
+			});
 			dispatch(setTextsVoicesAction(queries));
 			setTimeout(() => {
 				dispatch(setLoading());

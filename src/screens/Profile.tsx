@@ -256,7 +256,7 @@ const Profile: React.FC = () => {
 			{Platform.OS === 'ios' && <SafeAreaView style={styled.iosStatusBar} />}
 			<KeyboardAwareScrollView style={styled.keyboardAwareScrollView}>
 				<SafeAreaView style={styled.hero}>
-					<StatusBar backgroundColor={Colors.white} barStyle="dark-content" />
+					<StatusBar backgroundColor={Colors.primary} barStyle="dark-content" />
 					<SweetAlert
 						visible={state.visible}
 						type={state.type}
@@ -363,7 +363,7 @@ const styled = StyleSheet.create({
 		backgroundColor: Colors.white,
 	},
 	header: {
-		paddingTop: percentageDimensions(2, 'height'),
+		paddingTop: percentageDimensions(4.5, 'height'),
 		paddingBottom: percentageDimensions(4, 'height'),
 	},
 	text: {

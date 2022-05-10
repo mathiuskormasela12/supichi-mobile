@@ -6,6 +6,10 @@ export interface IReduxDataAction extends IReduxAction {
 		data: {
 			texts: any[];
 			voices: any[];
+			textPage: number;
+			textTotalPages: number;
+			voicePage: number;
+			voiceTotalPages: number;
 		};
 	};
 }

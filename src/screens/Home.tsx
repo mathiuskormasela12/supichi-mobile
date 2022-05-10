@@ -13,6 +13,7 @@ import {
 	StatusBar,
 	useWindowDimensions,
 	StyleSheet,
+	Alert,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
@@ -27,7 +28,12 @@ import {OrderByTypes, GroupByDayTypes} from '../types';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
 import {setGroupByDay, setOrderBy} from '../redux/actions/filter';
-import {setTextsAction, setVoicesAction} from '../redux/actions/data';
+import {
+	setTextsAction,
+	setVoicesAction,
+	addTextsAction,
+	addVoicesAction,
+} from '../redux/actions/data';
 import {setTabViewIndex} from '../redux/actions/tabViewIndex';
 
 // import all screens
@@ -66,6 +72,12 @@ const Home: React.FC<IHomeProps> = props => {
 	const fetchingFromSignInScreen: boolean = useSelector(
 		(currentGlobalStates: any) =>
 			currentGlobalStates.data.fetchingFromSignInScreen,
+	);
+	const textPage: number = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.data.textPage,
+	);
+	const voicePage: number = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.data.voicePage,
 	);
 	const [routes] = useState([
 		{
@@ -132,7 +144,24 @@ const Home: React.FC<IHomeProps> = props => {
 			const decode: any = jwtDecode(accessToken);
 			const queries: ITextsVoicesGetTextsVoicesQuery = {
 				page: 1,
+				limit: 6,
 				id: decode.id,
+				groupByDate: groupByDay,
+				orderBy,
+			};
+			dispatch(setTextsAction(queries));
+			dispatch(setVoicesAction(queries));
+		} else if (
+			accessToken &&
+			props.route &&
+			!props.route.params &&
+			!fetchingFromSignInScreen
+		) {
+			const decode: any = jwtDecode(accessToken);
+			const queries: ITextsVoicesGetTextsVoicesQuery = {
+				page: 1,
+				id: decode.id,
+				limit: 6,
 				groupByDate: groupByDay,
 				orderBy,
 			};
@@ -143,6 +172,7 @@ const Home: React.FC<IHomeProps> = props => {
 			const queries: ITextsVoicesGetTextsVoicesQuery = {
 				page: 1,
 				id: decode.id,
+				limit: 6,
 				groupByDate: groupByDay,
 				orderBy,
 			};
@@ -151,6 +181,48 @@ const Home: React.FC<IHomeProps> = props => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [groupByDay, orderBy]);
+
+	useEffect(() => {
+		if (
+			accessToken &&
+			typeof textPage === 'number' &&
+			textPage !== 1 &&
+			!fetchingFromSignInScreen
+		) {
+			const decode: any = jwtDecode(accessToken);
+			const queries: ITextsVoicesGetTextsVoicesQuery = {
+				page: textPage,
+				limit: 6,
+				id: decode.id,
+				groupByDate: groupByDay,
+				orderBy,
+			};
+			dispatch(addTextsAction(queries));
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [textPage]);
+
+	useEffect(() => {
+		if (
+			accessToken &&
+			!fetchingFromSignInScreen &&
+			typeof voicePage === 'number' &&
+			voicePage !== 1
+		) {
+			Alert.alert('masih', String(voicePage));
+			const decode: any = jwtDecode(accessToken);
+			const queries: ITextsVoicesGetTextsVoicesQuery = {
+				page: textPage,
+				limit: 6,
+				id: decode.id,
+				groupByDate: groupByDay,
+				orderBy,
+			};
+			dispatch(addVoicesAction(queries));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [voicePage]);
 
 	return (
 		<Fragment>

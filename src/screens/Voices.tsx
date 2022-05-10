@@ -34,6 +34,12 @@ const Voices: React.FC = () => {
 	const voices: any[] = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.data.voices,
 	);
+	const page: number = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.data.voicePage,
+	);
+	const totalPages: number = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.data.voiceTotalPages,
+	);
 	const fetching: boolean = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.data.fetchingVoices,
 	);
@@ -136,6 +142,7 @@ const Voices: React.FC = () => {
 			const queries: ITextsVoicesGetTextsVoicesQuery = {
 				page: 1,
 				id: decode.id,
+				limit: 6,
 				groupByDate: groupByDay,
 				orderBy,
 			};
@@ -195,6 +202,19 @@ const Voices: React.FC = () => {
 					});
 				}, 500);
 			}
+		}
+	};
+
+	const handleNextPage = () => {
+		if (page < totalPages) {
+			dispatch({
+				type: 'SET_TEXT_PAGE',
+				payload: {
+					data: {
+						textPage: page + 1,
+					},
+				},
+			});
 		}
 	};
 
@@ -260,6 +280,7 @@ const Voices: React.FC = () => {
 									return null;
 								}
 							}}
+							onEndReached={handleNextPage}
 						/>
 					) : (
 						<Fragment>
@@ -281,6 +302,7 @@ const Voices: React.FC = () => {
 										/>
 									</Container>
 								)}
+								onEndReached={handleNextPage}
 							/>
 						</Fragment>
 					)}
