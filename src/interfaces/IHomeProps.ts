@@ -1,5 +1,9 @@
 // ========== IHomeProps
 
 export interface IHomeProps {
-	isFromLoginScreen?: boolean;
+	route: {
+		params: {
+			isFromLoginScreen?: boolean;
+		};
+	};
 }

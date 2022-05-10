@@ -7,4 +7,5 @@ export interface IDataGlobalStates {
 	voices: DataTypes;
 	fetchingTexts: boolean;
 	fetchingVoices: boolean;
+	fetchingFromSignInScreen: boolean;
 }

@@ -7,6 +7,7 @@ const initialStates: IDataGlobalStates = {
 	voices: [],
 	fetchingTexts: false,
 	fetchingVoices: false,
+	fetchingFromSignInScreen: true,
 };
 
 const dataReducer = (
@@ -19,6 +20,7 @@ const dataReducer = (
 				...states,
 				texts: action.payload.data.texts,
 				voices: action.payload.data.voices,
+				fetchingFromSignInScreen: false,
 			};
 		}
 

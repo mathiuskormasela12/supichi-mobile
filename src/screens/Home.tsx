@@ -17,11 +17,17 @@ import {
 import {useSelector, useDispatch} from 'react-redux';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import {useNavigation} from '@react-navigation/native';
-import {IFilterGlobalStates, IHomeProps} from '../interfaces';
+import jwtDecode from 'jwt-decode';
+import {
+	IFilterGlobalStates,
+	IHomeProps,
+	ITextsVoicesGetTextsVoicesQuery,
+} from '../interfaces';
 import {OrderByTypes, GroupByDayTypes} from '../types';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
 import {setGroupByDay, setOrderBy} from '../redux/actions/filter';
+import {setTextsAction, setVoicesAction} from '../redux/actions/data';
 import {setTabViewIndex} from '../redux/actions/tabViewIndex';
 
 // import all screens
@@ -35,7 +41,7 @@ import {Container} from '../components';
 import filterIcon from '../assets/images/filter-icon.png';
 import CheckList from '../assets/images/check-list.svg';
 
-const Home: React.FC<IHomeProps> = () => {
+const Home: React.FC<IHomeProps> = props => {
 	const dispatch = useDispatch();
 	const navigation = useNavigation();
 	const filter: IFilterGlobalStates = useSelector(
@@ -56,6 +62,10 @@ const Home: React.FC<IHomeProps> = () => {
 	);
 	const orderBy: OrderByTypes = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.filter.orderBy,
+	);
+	const fetchingFromSignInScreen: boolean = useSelector(
+		(currentGlobalStates: any) =>
+			currentGlobalStates.data.fetchingFromSignInScreen,
 	);
 	const [routes] = useState([
 		{
@@ -111,6 +121,36 @@ const Home: React.FC<IHomeProps> = () => {
 			navigation.navigate('SignIn' as never);
 		}
 	}, [accessToken, refreshToken, navigation]);
+
+	useEffect(() => {
+		if (
+			accessToken &&
+			props.route &&
+			props.route.params &&
+			!props.route.params.isFromLoginScreen
+		) {
+			const decode: any = jwtDecode(accessToken);
+			const queries: ITextsVoicesGetTextsVoicesQuery = {
+				page: 1,
+				id: decode.id,
+				groupByDate: groupByDay,
+				orderBy,
+			};
+			dispatch(setTextsAction(queries));
+			dispatch(setVoicesAction(queries));
+		} else if (accessToken && !fetchingFromSignInScreen) {
+			const decode: any = jwtDecode(accessToken);
+			const queries: ITextsVoicesGetTextsVoicesQuery = {
+				page: 1,
+				id: decode.id,
+				groupByDate: groupByDay,
+				orderBy,
+			};
+			dispatch(setTextsAction(queries));
+			dispatch(setVoicesAction(queries));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [groupByDay, orderBy]);
 
 	return (
 		<Fragment>
@@ -183,11 +223,11 @@ const Home: React.FC<IHomeProps> = () => {
 					renderScene={renderScene}
 					onIndexChange={setIndex}
 					initialLayout={{width: layout.width}}
-					renderTabBar={props => (
+					renderTabBar={renderProps => (
 						<View style={{backgroundColor: Colors.primary}}>
 							<Container size={100}>
 								<TabBar
-									{...props}
+									{...renderProps}
 									style={styled.navbar}
 									inactiveColor={Colors.inactiveColor}
 									activeColor={Colors.white}
@@ -204,10 +244,6 @@ const Home: React.FC<IHomeProps> = () => {
 			{Platform.OS === 'ios' && <SafeAreaView style={styled.iosBottomBar} />}
 		</Fragment>
 	);
-};
-
-Home.defaultProps = {
-	isFromLoginScreen: false,
 };
 
 export default Home;

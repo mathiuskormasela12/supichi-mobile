@@ -1,6 +1,6 @@
 // =========== Texts
 // import all modules
-import React, {useState, useEffect, Fragment} from 'react';
+import React, {useState, Fragment} from 'react';
 import {
 	SafeAreaView,
 	View,
@@ -16,7 +16,6 @@ import jwtDecode from 'jwt-decode';
 import {percentageDimensions} from '../helpers';
 import {
 	IGetTextVoiceDetail,
-	IHomeProps,
 	ITextsVoicesGetTextsVoicesQuery,
 } from '../interfaces';
 import {Colors, Fonts} from '../themes';
@@ -30,7 +29,7 @@ import Service from '../services';
 // import all components
 import {Container, Card, DetailModal, SweetAlert} from '../components';
 
-const Texts: React.FC<IHomeProps> = props => {
+const Texts: React.FC = () => {
 	const dispatch = useDispatch();
 	const texts: any[] = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.data.texts,
@@ -56,7 +55,6 @@ const Texts: React.FC<IHomeProps> = props => {
 	const handleVisible = () => {
 		setVisible((currentVisible: boolean) => !currentVisible);
 	};
-	const {isFromLoginScreen} = props;
 
 	type DetailState = {
 		id: number | null;
@@ -188,20 +186,6 @@ const Texts: React.FC<IHomeProps> = props => {
 			}
 		}
 	};
-
-	useEffect(() => {
-		if (accessToken && refreshToken && !isFromLoginScreen) {
-			const decode: any = jwtDecode(accessToken);
-			const queries: ITextsVoicesGetTextsVoicesQuery = {
-				page: 1,
-				id: decode.id,
-				groupByDate: groupByDay,
-				orderBy,
-			};
-			dispatch(setTextsAction(queries));
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [groupByDay, orderBy]);
 
 	return (
 		<SafeAreaView style={styled.hero}>

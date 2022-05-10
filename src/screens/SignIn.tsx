@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import jwtDecode from 'jwt-decode';
 import {useSelector, useDispatch} from 'react-redux';
 import ArrowBack from '../assets/images/arrow-back.svg';
 import {ILoginBody, ITextsVoicesGetTextsVoicesQuery} from '../interfaces';
@@ -90,9 +91,10 @@ const SignIn: React.FC = () => {
 		};
 		try {
 			const {data: results} = await Services.login(data);
+			const decode: any = jwtDecode(results.results.accessToken);
 			const queries: ITextsVoicesGetTextsVoicesQuery = {
 				page: 1,
-				id: results.id,
+				id: decode.id,
 				groupByDate: 1,
 				orderBy: 'ASC',
 			};

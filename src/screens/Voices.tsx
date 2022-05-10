@@ -1,6 +1,6 @@
 // =========== Voices
 // import all modules
-import React, {Fragment, useState, useEffect} from 'react';
+import React, {Fragment, useState} from 'react';
 import {
 	SafeAreaView,
 	View,
@@ -15,7 +15,6 @@ import {useSelector, useDispatch} from 'react-redux';
 import jwtDecode from 'jwt-decode';
 import {percentageDimensions} from '../helpers';
 import {
-	IHomeProps,
 	ITextsVoicesGetTextsVoicesQuery,
 	IGetTextVoiceDetail,
 } from '../interfaces';
@@ -30,7 +29,7 @@ import Service from '../services';
 // import all components
 import {Container, Card, DetailModal, SweetAlert} from '../components';
 
-const Voices: React.FC<IHomeProps> = props => {
+const Voices: React.FC = () => {
 	const dispatch = useDispatch();
 	const voices: any[] = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.data.voices,
@@ -57,8 +56,6 @@ const Voices: React.FC<IHomeProps> = props => {
 	const handleVisible = () => {
 		setVisible((currentVisible: boolean) => !currentVisible);
 	};
-
-	const {isFromLoginScreen} = props;
 
 	type DetailState = {
 		id: number | null;
@@ -200,20 +197,6 @@ const Voices: React.FC<IHomeProps> = props => {
 			}
 		}
 	};
-
-	useEffect(() => {
-		if (accessToken && refreshToken && !isFromLoginScreen) {
-			const decode: any = jwtDecode(accessToken);
-			const queries: ITextsVoicesGetTextsVoicesQuery = {
-				page: 1,
-				id: decode.id,
-				groupByDate: groupByDay,
-				orderBy,
-			};
-			dispatch(setVoicesAction(queries));
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [groupByDay, orderBy]);
 
 	return (
 		<SafeAreaView style={styled.hero}>
