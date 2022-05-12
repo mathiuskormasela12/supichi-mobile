@@ -40,20 +40,37 @@ export const setTextsVoicesAction: ReduxSetTextsVoicesAction = (
 					},
 				});
 			}
-		} catch (err: any) {
-			dispatch({
-				type: 'SET_TEXTS_VOICES',
-				payload: {
-					data: {
-						texts: [],
-						voices: [],
-						textPage: 1,
-						textTotalPages: 1,
-						voicePage: 1,
-						voiceTotalPages: 1,
+		} catch (errTexts: any) {
+			try {
+				const {data: voices} = await Services.getAllVoices(queries);
+				dispatch({
+					type: 'SET_TEXTS_VOICES',
+					payload: {
+						data: {
+							texts: [],
+							voices: voices.results,
+							textPage: 1,
+							textTotalPages: 1,
+							voicePage: voices.pageInfo.currentPage,
+							voiceTotalPages: voices.pageInfo.totalPages,
+						},
 					},
-				},
-			});
+				});
+			} catch (errorVoices: any) {
+				dispatch({
+					type: 'SET_TEXTS_VOICES',
+					payload: {
+						data: {
+							texts: [],
+							voices: [],
+							textPage: 1,
+							textTotalPages: 1,
+							voicePage: 1,
+							voiceTotalPages: 1,
+						},
+					},
+				});
+			}
 		}
 	};
 };
