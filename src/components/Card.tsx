@@ -13,7 +13,6 @@ import TextIcon from '../assets/images/text-icon.svg';
 import VoiceIcon from '../assets/images/voice-icon.svg';
 import TrashIcon from '../assets/images/trash-icon.svg';
 import CopyIcon from '../assets/images/copy-icon.svg';
-import DownloadIcon from '../assets/images/download-icon.svg';
 
 export const Card = (props: ICardProps) => {
 	const {text, time, type, onPress, onDelete} = props;
@@ -26,15 +25,9 @@ export const Card = (props: ICardProps) => {
 		<TouchableOpacity activeOpacity={0.6}>
 			<View style={styled.actionCard}>
 				<View style={[styled.actionCardCol, styled.borderRight]}>
-					{type === 'text' ? (
-						<TouchableOpacity onPress={() => copyToClipboard(text)}>
-							<CopyIcon />
-						</TouchableOpacity>
-					) : (
-						<TouchableOpacity>
-							<DownloadIcon />
-						</TouchableOpacity>
-					)}
+					<TouchableOpacity onPress={() => copyToClipboard(text)}>
+						<CopyIcon />
+					</TouchableOpacity>
 				</View>
 				<View style={styled.actionCardCol}>
 					<TouchableOpacity onPress={onDelete}>
@@ -53,7 +46,7 @@ export const Card = (props: ICardProps) => {
 				</View>
 				<View style={styled.lastCol}>
 					<Text style={styled.text} numberOfLines={1} ellipsizeMode="tail">
-						{text}
+						{text.slice(0, 26).concat('...')}
 					</Text>
 					<Text style={styled.time}>{time}</Text>
 					<View style={styled.border} />

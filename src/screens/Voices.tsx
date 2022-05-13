@@ -228,6 +228,7 @@ const Voices: React.FC = () => {
 				buttonText="Play"
 				date={detail.date}
 				text={detail.text}
+				id={detail && detail.id ? detail.id : 0}
 				voiceLink={detail.voiceLink}
 				onClose={handleVisible}
 			/>

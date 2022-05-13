@@ -30,10 +30,10 @@ export const setTextsVoicesAction: ReduxSetTextsVoicesAction = (
 					type: 'SET_TEXTS_VOICES',
 					payload: {
 						data: {
-							texts: [],
+							texts: texts.results,
 							voices: [],
-							textPage: 1,
-							textTotalPages: 1,
+							textPage: texts.pageInfo.currentPage,
+							textTotalPages: texts.pageInfo.totalPages,
 							voicePage: 1,
 							voiceTotalPages: 1,
 						},

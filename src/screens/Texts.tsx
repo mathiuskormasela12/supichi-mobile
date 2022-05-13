@@ -217,6 +217,7 @@ const Texts: React.FC = () => {
 				buttonText="Close"
 				date={detail.date}
 				text={detail.text}
+				id={detail && detail.id ? detail.id : 0}
 				onClose={handleVisible}
 			/>
 			<SweetAlert

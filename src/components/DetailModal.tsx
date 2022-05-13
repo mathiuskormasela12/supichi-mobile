@@ -1,6 +1,6 @@
 // ========== Detail Modal
 // import all modules
-import React, {Fragment, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
 	SafeAreaView,
 	ScrollView,
@@ -11,13 +11,23 @@ import {
 	Platform,
 	StyleSheet,
 } from 'react-native';
+import {useSelector, useDispatch} from 'react-redux';
 import Sound from 'react-native-sound';
-import {IDetailModalProps} from '../interfaces';
+import Clipboard from '@react-native-clipboard/clipboard';
+import jwtDecode from 'jwt-decode';
+import {
+	IDetailModalProps,
+	ITextsVoicesGetTextsVoicesQuery,
+} from '../interfaces';
+import {AlertType, GroupByDayTypes, OrderByTypes} from '../types';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
+import {setTextsAction} from '../redux/actions/data';
+import {setLoading} from '../redux/actions/loading';
+import Service from '../services';
 
 // import all components
-import {Container, Button} from './';
+import {Container, Button, SweetAlert} from './';
 
 // import all assets
 import CloseIcon from '../assets/images/close-icon.svg';
@@ -27,7 +37,6 @@ import TextIcon from '../assets/images/text-detail-icon.svg';
 import ActionIcon from '../assets/images/action-detail-icon.svg';
 import TrashIcon from '../assets/images/trash-icon.svg';
 import CopyIcon from '../assets/images/copy-icon.svg';
-import DownloadIcon from '../assets/images/download-icon.svg';
 
 export const DetailModal = (props: IDetailModalProps) => {
 	const {
@@ -38,12 +47,38 @@ export const DetailModal = (props: IDetailModalProps) => {
 		renderFrom,
 		date,
 		text,
+		id,
 		onClose,
 		voiceLink,
 	} = props;
 
+	const dispatch = useDispatch();
 	const [reading, setReading] = useState(false);
 	const [whoosh, setWhoosh] = useState<any>(null);
+	const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+
+	const accessToken: string | null = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.auth.accessToken,
+	);
+	const groupByDay: GroupByDayTypes = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.filter.groupByDay,
+	);
+	const orderBy: OrderByTypes = useSelector(
+		(currentGlobalStates: any) => currentGlobalStates.filter.orderBy,
+	);
+
+	type ErrorMessage = {
+		visible: boolean;
+		title: string;
+		subtitle: string;
+		type: AlertType;
+	};
+	const [errorMessage, setErrorMessage] = useState<ErrorMessage>({
+		visible: false,
+		title: '',
+		subtitle: '',
+		type: 'failed',
+	});
 
 	useEffect(() => {
 		if (voiceLink && voiceLink.length > 0) {
@@ -87,10 +122,95 @@ export const DetailModal = (props: IDetailModalProps) => {
 		}
 	};
 
+	const copyToClipboard = (copiedText: string) => {
+		Clipboard.setString(copiedText);
+	};
+
+	const onOkDelete = async () => {
+		setDeleteConfirmation(false);
+		onClose();
+		if (id) {
+			dispatch(setLoading());
+			try {
+				const {data} =
+					type === 'text'
+						? await Service.deleteText({id})
+						: await Service.deleteVoice({id});
+				setTimeout(() => {
+					dispatch(setLoading());
+					setErrorMessage({
+						visible: true,
+						title: 'Success',
+						type: 'success',
+						subtitle: data.message,
+					});
+				}, 500);
+			} catch (err: any) {
+				setTimeout(() => {
+					dispatch(setLoading());
+					console.log(err);
+					setErrorMessage({
+						visible: true,
+						title: 'Failed',
+						type: 'failed',
+						subtitle:
+							err &&
+							err.response &&
+							err.response.data &&
+							err.response.data.message
+								? err.response.data.message
+								: err && err.message
+								? err.message
+								: 'Server Error',
+					});
+				}, 500);
+			}
+		}
+	};
+
+	const onCancelDelete = () => {
+		setDeleteConfirmation(false);
+	};
+
+	const handleCloseSweetAlert = () => {
+		if (accessToken) {
+			const decode: any = jwtDecode(accessToken);
+			const queries: ITextsVoicesGetTextsVoicesQuery = {
+				page: 1,
+				id: decode.id,
+				limit: 6,
+				groupByDate: groupByDay,
+				orderBy,
+			};
+			dispatch(setTextsAction(queries));
+		}
+		setErrorMessage({
+			visible: false,
+			title: '',
+			subtitle: '',
+			type: 'failed',
+		});
+	};
+
 	return (
 		<Modal animationType="fade" transparent visible={visible}>
 			<View style={styled.background} />
 			<SafeAreaView>
+				<SweetAlert
+					visible={deleteConfirmation}
+					type="confirmation"
+					title={type === 'text' ? 'Remove Text' : 'Remove Voice'}
+					subtitle="Are you sure to remove this one?"
+					onOk={onOkDelete}
+					onCancel={onCancelDelete}
+				/>
+				<SweetAlert
+					visible={errorMessage.visible}
+					type={errorMessage.type}
+					title={errorMessage.title}
+					subtitle={errorMessage.subtitle}
+					onOk={handleCloseSweetAlert}
+				/>
 				<ScrollView>
 					<View style={styled.wrapper}>
 						<View style={styled.box}>
@@ -144,28 +264,13 @@ export const DetailModal = (props: IDetailModalProps) => {
 										<View style={styled.lastCol}>
 											<Text style={styled.label}>Actions</Text>
 											<View style={styled.iconList}>
-												{type === 'text' ? (
-													<Fragment>
-														<TouchableOpacity>
-															<CopyIcon style={styled.actionIcon} />
-														</TouchableOpacity>
-														<TouchableOpacity>
-															<TrashIcon style={styled.actionIcon} />
-														</TouchableOpacity>
-													</Fragment>
-												) : (
-													<Fragment>
-														<TouchableOpacity>
-															<DownloadIcon style={styled.actionIcon} />
-														</TouchableOpacity>
-														<TouchableOpacity>
-															<CopyIcon style={styled.actionIcon} />
-														</TouchableOpacity>
-														<TouchableOpacity>
-															<TrashIcon style={styled.actionIcon} />
-														</TouchableOpacity>
-													</Fragment>
-												)}
+												<TouchableOpacity onPress={() => copyToClipboard(text)}>
+													<CopyIcon style={styled.actionIcon} />
+												</TouchableOpacity>
+												<TouchableOpacity
+													onPress={() => setDeleteConfirmation(true)}>
+													<TrashIcon style={styled.actionIcon} />
+												</TouchableOpacity>
 											</View>
 										</View>
 									</View>
