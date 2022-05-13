@@ -3,6 +3,7 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {Swipeable} from 'react-native-gesture-handler';
+import Clipboard from '@react-native-clipboard/clipboard';
 import {ICardProps} from '../interfaces';
 import {percentageDimensions} from '../helpers';
 import {Colors, Fonts} from '../themes';
@@ -17,12 +18,16 @@ import DownloadIcon from '../assets/images/download-icon.svg';
 export const Card = (props: ICardProps) => {
 	const {text, time, type, onPress, onDelete} = props;
 
+	const copyToClipboard = (copiedText: string) => {
+		Clipboard.setString(copiedText);
+	};
+
 	const rightSwipe = () => (
 		<TouchableOpacity activeOpacity={0.6}>
 			<View style={styled.actionCard}>
 				<View style={[styled.actionCardCol, styled.borderRight]}>
 					{type === 'text' ? (
-						<TouchableOpacity>
+						<TouchableOpacity onPress={() => copyToClipboard(text)}>
 							<CopyIcon />
 						</TouchableOpacity>
 					) : (
