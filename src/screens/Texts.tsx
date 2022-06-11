@@ -22,7 +22,6 @@ import {Colors, Fonts} from '../themes';
 import {AlertType, GroupByDayTypes, OrderByTypes} from '../types';
 import emptyStateImage from '../assets/images/empty-state.png';
 import {setTextsAction} from '../redux/actions/data';
-import {setTokens} from '../redux/actions/auth';
 import {setLoading} from '../redux/actions/loading';
 import Service from '../services';
 
@@ -159,7 +158,7 @@ const Texts: React.FC = () => {
 	};
 
 	const handleGetDetail = async (id: number) => {
-		if (accessToken && refreshToken && setTokens) {
+		if (accessToken && refreshToken) {
 			const data: IGetTextVoiceDetail = {
 				id,
 			};
@@ -248,7 +247,7 @@ const Texts: React.FC = () => {
 							sections={texts}
 							keyExtractor={item => String(item.id)}
 							renderItem={({item}) => (
-								<Container>
+								<Container size={90}>
 									<Card
 										text={item.text}
 										time={item.time}
@@ -261,7 +260,7 @@ const Texts: React.FC = () => {
 							renderSectionHeader={({section: {date, data}}) => {
 								if (data.length > 0) {
 									return (
-										<Container>
+										<Container size={90}>
 											<Text style={styled.title}>{date}</Text>
 										</Container>
 									);
@@ -273,7 +272,7 @@ const Texts: React.FC = () => {
 						/>
 					) : (
 						<Fragment>
-							<Container>
+							<Container size={90}>
 								<Text style={styled.flatListTitle}>All Texts</Text>
 							</Container>
 							<FlatList
@@ -281,7 +280,7 @@ const Texts: React.FC = () => {
 								data={texts}
 								keyExtractor={(item, index) => String(index)}
 								renderItem={({item}) => (
-									<Container>
+									<Container size={90}>
 										<Card
 											text={item.text}
 											time={item.time}

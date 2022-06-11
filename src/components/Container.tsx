@@ -5,7 +5,11 @@ import {View, StyleSheet} from 'react-native';
 import {percentageDimensions} from '../helpers';
 import {IContainerProps} from '../interfaces';
 
-export const Container = ({children, size, relative}: IContainerProps) => {
+export const Container: React.FC<IContainerProps> = ({
+	children,
+	size,
+	relative,
+}) => {
 	const styles: any = {
 		width: percentageDimensions(size),
 		position: relative ? 'relative' : 'static',

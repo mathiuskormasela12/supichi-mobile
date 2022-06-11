@@ -38,7 +38,7 @@ import ActionIcon from '../assets/images/action-detail-icon.svg';
 import TrashIcon from '../assets/images/trash-icon.svg';
 import CopyIcon from '../assets/images/copy-icon.svg';
 
-export const DetailModal = (props: IDetailModalProps) => {
+export const DetailModal: React.FC<IDetailModalProps> = props => {
 	const {
 		visible,
 		title,

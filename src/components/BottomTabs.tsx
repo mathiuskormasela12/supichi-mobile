@@ -28,7 +28,7 @@ import Service from '../services';
 import {LANGUAGES} from '../constants/LANGUAGES';
 
 // import all components
-import {DetailModal, SweetAlert} from './';
+import {SweetAlert} from './';
 
 // import all icons
 import HomeIcon from '../assets/images/home-icon.svg';
@@ -41,7 +41,7 @@ import CameraIcon from '../assets/images/camera-icon.svg';
 import {Button} from './Button';
 import {Container} from './Container';
 
-export const BottomTabs: any = (props: any) => {
+export const BottomTabs: React.FC<any> = props => {
 	const {
 		navigation,
 		state: {index},
@@ -52,7 +52,6 @@ export const BottomTabs: any = (props: any) => {
 	const [renderFrom, setRenderFrom] = useState<RenderFromType>('Camera');
 	const [uri, setUri] = useState<string>('');
 	const [languageKey, setLanguageKey] = useState<string>('');
-	const [detailModalVisible, setDetailModalVisible] = useState(false);
 	const tabViewIndex: number = useSelector(
 		(currentGlobalStates: any) => currentGlobalStates.tabViewIndex.tabViewIndex,
 	);
@@ -83,13 +82,6 @@ export const BottomTabs: any = (props: any) => {
 	});
 
 	const navigateTo = (screen: string) => navigation.navigate(screen);
-
-	const handleDetailModalVisible = () => {
-		setDetailModalVisible((currentVisible: boolean) => !currentVisible);
-		if (visible) {
-			setVisible((currentVisible: boolean) => !currentVisible);
-		}
-	};
 
 	const handleLogout = () => {
 		dispatch(setTokens(null, null));
@@ -302,17 +294,6 @@ export const BottomTabs: any = (props: any) => {
 				</View>
 			)}
 			<SafeAreaView>
-				<DetailModal
-					visible={detailModalVisible}
-					type={tabViewIndex === 0 ? 'text' : 'voice'}
-					title="Save Result"
-					renderFrom="Image Gallery"
-					buttonText="Close"
-					date="Aug 5, 2022"
-					text="Lorem ipsum dolor sit amet,
-					consectetur adipiscing. "
-					onClose={handleDetailModalVisible}
-				/>
 				<SweetAlert
 					visible={errorMessage.visible}
 					type="failed"

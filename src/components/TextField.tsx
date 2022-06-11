@@ -8,7 +8,7 @@ import {setInvalidMessage} from '../redux/actions/invalidMessage';
 import {ITextFieldProps} from '../interfaces';
 import {Colors, Fonts} from '../themes';
 
-export const TextField = (props: ITextFieldProps) => {
+export const TextField: React.FC<ITextFieldProps> = props => {
 	const {label, type, name} = props;
 	const keyboardType = type === 'password' ? 'default' : type;
 	const dispatch = useDispatch();
@@ -142,6 +142,12 @@ export const TextField = (props: ITextFieldProps) => {
 			</View>
 		</Fragment>
 	);
+};
+
+TextField.defaultProps = {
+	label: '',
+	type: 'default',
+	name: '',
 };
 
 const styled = StyleSheet.create({

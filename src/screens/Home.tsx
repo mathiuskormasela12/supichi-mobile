@@ -318,6 +318,14 @@ const Home: React.FC<IHomeProps> = props => {
 	);
 };
 
+Home.defaultProps = {
+	route: {
+		params: {
+			isFromLoginScreen: false,
+		},
+	},
+};
+
 export default Home;
 
 const styled = StyleSheet.create({

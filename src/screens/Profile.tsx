@@ -256,7 +256,10 @@ const Profile: React.FC = () => {
 			{Platform.OS === 'ios' && <SafeAreaView style={styled.iosStatusBar} />}
 			<KeyboardAwareScrollView style={styled.keyboardAwareScrollView}>
 				<SafeAreaView style={styled.hero}>
-					<StatusBar backgroundColor={Colors.primary} barStyle="dark-content" />
+					<StatusBar
+						backgroundColor={Colors.primary}
+						barStyle="light-content"
+					/>
 					<SweetAlert
 						visible={state.visible}
 						type={state.type}
@@ -264,7 +267,7 @@ const Profile: React.FC = () => {
 						subtitle={state.messageSubtitle}
 						onOk={handleCloseSweetAlert}
 					/>
-					<Container>
+					<Container size={90}>
 						<View style={styled.header}>
 							<Text style={styled.text}>Profile</Text>
 						</View>

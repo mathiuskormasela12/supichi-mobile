@@ -13,7 +13,7 @@ import {Container, Button} from './';
 import SuccessIcon from '../assets/images/success-icon.svg';
 import FailedIcon from '../assets/images/failed-icon.svg';
 
-export const SweetAlert = (props: ISweetAlertProps) => {
+export const SweetAlert: React.FC<ISweetAlertProps> = props => {
 	const {onOk, title, subtitle, type, visible, onCancel} = props;
 
 	return (
@@ -71,7 +71,12 @@ export const SweetAlert = (props: ISweetAlertProps) => {
 };
 
 SweetAlert.defaultProps = {
+	title: '',
+	subtitle: '',
+	type: 'success',
 	visible: false,
+	onOk: () => {},
+	onCancel: () => {},
 };
 
 const styled = StyleSheet.create({

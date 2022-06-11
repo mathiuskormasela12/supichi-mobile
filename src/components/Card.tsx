@@ -14,7 +14,7 @@ import VoiceIcon from '../assets/images/voice-icon.svg';
 import TrashIcon from '../assets/images/trash-icon.svg';
 import CopyIcon from '../assets/images/copy-icon.svg';
 
-export const Card = (props: ICardProps) => {
+export const Card: React.FC<ICardProps> = props => {
 	const {text, time, type, onPress, onDelete} = props;
 
 	const copyToClipboard = (copiedText: string) => {
@@ -58,6 +58,10 @@ export const Card = (props: ICardProps) => {
 
 Card.defaultProps = {
 	type: 'text',
+	text: '',
+	time: '',
+	onDelete: () => {},
+	onPress: () => {},
 };
 
 const styled = StyleSheet.create({
